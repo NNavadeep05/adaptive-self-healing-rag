@@ -1,6 +1,11 @@
+import os
+import json
+
+from openai import OpenAI
 from qdrant_client import QdrantClient
 from qdrant_client.models import VectorParams, Distance, PointStruct
 from fastembed import TextEmbedding
+from fastembed.rerank.cross_encoder import TextCrossEncoder
 
 
 def embed_docs(text):
@@ -95,3 +100,111 @@ def get_doc_answer(client, query: str, k: int = 2) -> list[str]:
     ]
 
     return retrieved_docs
+
+def rerank(query: str, retrieved_docs: list[str]) -> list[str]:
+    """
+    Rerank a list of retrieved documents using a cross-encoder model.
+
+    This function takes the user's query and the candidate documents from 
+    dense retrieval, scores each pair simultaneously for deep semantic 
+    relevance using a cross-encoder, and returns the documents sorted 
+    from most relevant to least relevant.
+
+    Args:
+        query (str): The user's search query.
+        retrieved_docs (list[str]): The candidate documents from dense retrieval.
+
+    Returns:
+        list[str]: The reordered documents based on cross-encoder scores.
+    """
+    # Initialize the cross-encoder reranker
+    reranker = TextCrossEncoder(model_name="jinaai/jina-reranker-v2-base-multilingual")
+
+    # Get relevance scores for each document
+    scores = list(reranker.rerank(query, retrieved_docs))
+
+    # Pair each document with its score
+    scored_docs = list(zip(retrieved_docs, scores))
+
+    # Sort the paired list by score in descending order
+    scored_docs.sort(key=lambda x: x[1], reverse=True)
+
+    # Extract and return just the documents in the new sorted order
+    reranked_docs = [doc for doc, score in scored_docs]
+
+    return reranked_docs
+
+def generate_answer(query: str, retrieved_docs: list[str]) -> str:
+    """
+    Generate an answer to a query based on retrieved documents using an LLM.
+
+    Args:
+        query (str): The user query.
+        retrieved_docs (list[str]): The candidate documents from retrieval/reranking.
+
+    Returns:
+        str: The generated answer from the LLM.
+    """
+    client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+
+    ai_answer = client.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {
+                "role": "developer", 
+                "content": "Use the following documents to answer the user question: " + str(retrieved_docs) + "If the answer cannot be found in the documents, respond with 'I didn't find any relevant documents.'"
+            },
+            {
+                "role": "user", 
+                "content": query
+            }
+        ]
+    )
+
+    return ai_answer.choices[0].message.content
+
+# LLM-as-a-Judge Prompt
+llm_judge_prompt = """
+You are an expert evaluator of Retrieval-Augmented Generation systems.
+
+User question:
+{query}
+
+Retrieved documents:
+{retrieved_docs}
+
+Generated answer:
+{answer}
+
+Evaluate the answer using the retrieved documents.
+
+Answer the following in JSON:
+{{
+  "relevant_docs": true | false,
+  "sufficient_context": true | false,
+  "score": number between 0 and 1
+}}
+
+Guidelines:
+- relevant_docs = false if documents do not address the user question
+- sufficient_context = false if documents are related but incomplete
+- score should reflect overall answer quality and faithfulness
+"""
+
+# Function LLM-as-a-Judge
+def llm_judge(query, retrieved_docs, answer):
+    """
+    Evaluate the answer using the retrieved documents.
+
+    Args:
+        query (str): The user query.
+        retrieved_docs (list[str]): The retrieved documents.
+        answer (str): The generated answer.
+
+    Returns:
+        dict: A dictionary containing the evaluation results.
+    """
+    prompt = llm_judge_prompt.format(query=query, retrieved_docs=retrieved_docs, answer=answer)
+    client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+    response = client.chat.completions.create(model="gpt-3.5-turbo", messages=[{"role": "user", "content": prompt}])
+    return json.loads(response.choices[0].message.content)
