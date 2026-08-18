@@ -105,15 +105,45 @@ After generating an answer, an LLM judge evaluates whether the retrieved documen
 
 If the result fails the retry condition, LangGraph sends the workflow back through retrieval with an increased retrieval budget and reranking enabled. This gives the system a simple feedback loop instead of a fragile, single-shot RAG pipeline.
 
-## Implementation Improvements
+## Architecture
 
-- **Reuse vector store during retries:** The vector store is kept in LangGraph state so retries do not recreate the entire embedding store.
-- **More reliable judge output:** The LLM judge uses enforced JSON response formatting to prevent parsing crashes.
-- **Stronger judge model:** The evaluation judge was upgraded to `gpt-4o-mini` to match generation intelligence.
-- **Cleaner document context:** Retrieved documents are clearly separated by distinct headers before being passed to the answer generator.
-
-## Limitations / Future Work
-- **Persistent vector storage:** Storing Qdrant data to disk to avoid re-embedding on system restarts.
-- **Query rewriting:** Rather than just increasing retrieval count, using an LLM to rewrite the user's failed query before searching again.
-- **Hybrid dense + keyword retrieval:** Fusing BM25 search with dense embeddings for better baseline retrieval.
-- **More systematic evaluation:** Integrating rigorous RAG evaluation frameworks like RAGAS to track quantitative improvements across datasets.
+```text
+                    PDF
+                     │
+                     ▼
+             Document Loading
+                     │
+                     ▼
+              Dense Embedding
+                     │
+                     ▼
+               Qdrant Store
+                     │
+                     ▼
+             Dense Retrieval
+                     │
+                     ▼
+          Cross-Encoder Reranking
+                     │
+                     ▼
+             GPT-4o Generation
+                     │
+                     ▼
+          GPT-4o-mini LLM Judge
+                     │
+                     ▼
+              Evaluation
+                     │
+              ┌──────┴──────┐
+              │             │
+            Good          Not Good
+              │             │
+              ▼             ▼
+          Final Answer    Retry
+                            │
+                            ▼
+                   Increased Retrieval
+                     Budget + Reranking
+                            │
+                            └──────► Retrieval
+```
