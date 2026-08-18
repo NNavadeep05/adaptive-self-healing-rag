@@ -1,4 +1,4 @@
-from typing import TypedDict, List
+from typing import TypedDict, List, Any
 from langgraph_agent.retrieve_docs import embed_docs, get_doc_answer, rerank, generate_answer, llm_judge
 
 class RAGState(TypedDict):
@@ -13,6 +13,7 @@ class RAGState(TypedDict):
     retry_count: int
     max_retries: int
     healing_trace: List[str]
+    vector_store: Any
 
 def retrieve_node(state: RAGState):
     query = state["query"]
@@ -20,18 +21,22 @@ def retrieve_node(state: RAGState):
     mode = state["retrieval_mode"]
     text = state["text"]
     
-    # Embed Documents
-    docs = embed_docs(text)
+    # Check if we already embedded the documents
+    client = state.get("vector_store")
+    if not client:
+        # Embed Documents only if not already done
+        client = embed_docs(text)
 
-    # Get Answer
-    results = get_doc_answer(client=docs, query=query, k=budget)
+    # Get Answer using the client
+    results = get_doc_answer(client=client, query=query, k=budget)
     
     # Read retrieval model
     if state["retrieval_mode"] == "dense_rerank":
         results = rerank(query=query, retrieved_docs=results)
     
     return {"retrieved_docs": results,
-            "healing_trace": state["healing_trace"]}
+            "healing_trace": state.get("healing_trace", []),
+            "vector_store": client}
 
 def generate_node(state: RAGState):
     answer = generate_answer(query=state["query"], retrieved_docs=state["retrieved_docs"])

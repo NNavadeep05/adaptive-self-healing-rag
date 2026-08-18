@@ -147,12 +147,18 @@ def generate_answer(query: str, retrieved_docs: list[str]) -> str:
     """
     client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
+    formatted_docs = "\n\n".join(f"[Document {i+1}]\n{doc}" for i, doc in enumerate(retrieved_docs))
+    system_content = (
+        f"Use the following documents to answer the user question:\n\n{formatted_docs}\n\n"
+        "If the answer cannot be found in the documents, respond with 'I didn't find any relevant documents.'"
+    )
+
     ai_answer = client.chat.completions.create(
         model="gpt-4o",
         messages=[
             {
                 "role": "developer", 
-                "content": "Use the following documents to answer the user question: " + str(retrieved_docs) + "If the answer cannot be found in the documents, respond with 'I didn't find any relevant documents.'"
+                "content": system_content
             },
             {
                 "role": "user", 
@@ -206,5 +212,9 @@ def llm_judge(query, retrieved_docs, answer):
     """
     prompt = llm_judge_prompt.format(query=query, retrieved_docs=retrieved_docs, answer=answer)
     client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
-    response = client.chat.completions.create(model="gpt-3.5-turbo", messages=[{"role": "user", "content": prompt}])
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": prompt}],
+        response_format={"type": "json_object"}
+    )
     return json.loads(response.choices[0].message.content)
