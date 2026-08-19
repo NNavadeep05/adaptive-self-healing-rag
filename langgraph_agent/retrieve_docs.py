@@ -60,6 +60,7 @@ def embed_docs(text):
 
     return client
 
+
 def get_doc_answer(client, query: str, k: int = 2) -> list[str]:
     """
     Retrieve the top-k document chunks relevant to a query.
@@ -94,7 +95,10 @@ def get_doc_answer(client, query: str, k: int = 2) -> list[str]:
     # Print retrieved documents and their similarity scores for inspection
     print("\n--- Qdrant Retrieval Results ---")
     for i, point in enumerate(results.points):
-        print(f"Rank {i+1} | Score: {point.score:.4f} | Text: {point.payload['description']}")
+        print(
+            f"Rank {i+1} | Score: {point.score:.4f} | "
+            f"Text: {point.payload['description']}"
+        )
     print("--------------------------------\n")
 
     # Extract the original text from the retrieved points
@@ -105,24 +109,23 @@ def get_doc_answer(client, query: str, k: int = 2) -> list[str]:
 
     return retrieved_docs
 
+
 def rerank(query: str, retrieved_docs: list[str]) -> list[str]:
     """
     Rerank a list of retrieved documents using a cross-encoder model.
 
-    This function takes the user's query and the candidate documents from 
-    dense retrieval, scores each pair simultaneously for deep semantic 
-    relevance using a cross-encoder, and returns the documents sorted 
-    from most relevant to least relevant.
-
     Args:
-        query (str): The user's search query.
-        retrieved_docs (list[str]): The candidate documents from dense retrieval.
+        query (str): The user's query.
+        retrieved_docs (list[str]): Candidate documents from retrieval.
 
     Returns:
-        list[str]: The reordered documents based on cross-encoder scores.
+        list[str]: Documents sorted by cross-encoder relevance.
     """
+
     # Initialize the cross-encoder reranker
-    reranker = TextCrossEncoder(model_name="jinaai/jina-reranker-v2-base-multilingual")
+    reranker = TextCrossEncoder(
+        model_name="jinaai/jina-reranker-v2-base-multilingual"
+    )
 
     # Get relevance scores for each document
     scores = list(reranker.rerank(query, retrieved_docs))
@@ -130,13 +133,14 @@ def rerank(query: str, retrieved_docs: list[str]) -> list[str]:
     # Pair each document with its score
     scored_docs = list(zip(retrieved_docs, scores))
 
-    # Sort the paired list by score in descending order
+    # Sort by relevance score in descending order
     scored_docs.sort(key=lambda x: x[1], reverse=True)
 
-    # Extract and return just the documents in the new sorted order
+    # Extract the reordered documents
     reranked_docs = [doc for doc, score in scored_docs]
 
     return reranked_docs
+
 
 def generate_answer(query: str, retrieved_docs: list[str]) -> str:
     """
@@ -144,21 +148,29 @@ def generate_answer(query: str, retrieved_docs: list[str]) -> str:
 
     Args:
         query (str): The user query.
-        retrieved_docs (list[str]): The candidate documents from retrieval/reranking.
+        retrieved_docs (list[str]): Candidate documents.
 
     Returns:
-        str: The generated answer from the LLM.
+        str: The generated answer.
     """
+
     # Use Groq's OpenAI-compatible API
     client = OpenAI(
         api_key=os.environ.get("GROQ_API_KEY"),
         base_url="https://api.groq.com/openai/v1"
     )
 
-    formatted_docs = "\n\n".join(f"[Document {i+1}]\n{doc}" for i, doc in enumerate(retrieved_docs))
+    formatted_docs = "\n\n".join(
+        f"[Document {i+1}]\n{doc}"
+        for i, doc in enumerate(retrieved_docs)
+    )
+
     system_content = (
-        f"Use the following documents to answer the user question:\n\n{formatted_docs}\n\n"
-        "If the answer cannot be found in the documents, respond with 'I didn't find any relevant documents.'"
+        f"Use the following documents to answer the user question:\n\n"
+        f"{formatted_docs}\n\n"
+        "Answer the question using only the provided documents. "
+        "If the answer cannot be found in the documents, respond with "
+        "'I didn't find any relevant documents.'"
     )
 
     ai_answer = client.chat.completions.create(
@@ -176,6 +188,7 @@ def generate_answer(query: str, retrieved_docs: list[str]) -> str:
     )
 
     return ai_answer.choices[0].message.content
+
 
 # LLM-as-a-Judge Prompt
 llm_judge_prompt = """
@@ -200,10 +213,18 @@ Answer the following in JSON:
 }}
 
 Guidelines:
-- relevant_docs = false if documents do not address the user question
-- sufficient_context = false if documents are related but incomplete
-- score should reflect overall answer quality and faithfulness
+- relevant_docs = false if the retrieved documents do not address the user question
+- sufficient_context = false if the retrieved documents are related but incomplete
+- sufficient_context = false if the generated answer says "I didn't find any relevant documents."
+  or otherwise states that it cannot answer the question
+- If the generated answer is a fallback response saying that no relevant documents
+  were found, treat it as an unsuccessful answer even if some retrieved documents
+  appear relevant
+- score should reflect the overall quality, relevance, and faithfulness of the answer
+- A correct answer supported by the retrieved documents should receive a high score
+- An answer that cannot answer the user's question should receive a low score
 """
+
 
 # Function LLM-as-a-Judge
 def llm_judge(query, retrieved_docs, answer):
@@ -216,17 +237,30 @@ def llm_judge(query, retrieved_docs, answer):
         answer (str): The generated answer.
 
     Returns:
-        dict: A dictionary containing the evaluation results.
+        dict: Evaluation results.
     """
-    prompt = llm_judge_prompt.format(query=query, retrieved_docs=retrieved_docs, answer=answer)
+
+    prompt = llm_judge_prompt.format(
+        query=query,
+        retrieved_docs=retrieved_docs,
+        answer=answer
+    )
+
     # Use Groq's OpenAI-compatible API
     client = OpenAI(
         api_key=os.environ.get("GROQ_API_KEY"),
         base_url="https://api.groq.com/openai/v1"
     )
+
     response = client.chat.completions.create(
         model="openai/gpt-oss-20b",
-        messages=[{"role": "user", "content": prompt}],
+        messages=[
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ],
         response_format={"type": "json_object"}
     )
+
     return json.loads(response.choices[0].message.content)
