@@ -1,9 +1,13 @@
 import os
 import tempfile
 import streamlit as st
+from dotenv import load_dotenv
 
 from langgraph_agent.document_loader import load_document
 from langgraph_agent.graph import build_graph
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Configure page
 st.set_page_config(page_title="Adaptive Self-Healing RAG", layout="centered")
@@ -12,15 +16,15 @@ st.title("Adaptive Self-Healing RAG")
 st.markdown("""
 This system automatically:
 1. Retrieves relevant context from your PDF.
-2. Generates an answer using GPT-4o.
+2. Generates an answer using Groq LLM.
 3. Evaluates the answer using an LLM Judge.
 4. **Self-Heals**: If the context is insufficient or irrelevant, it will dynamically adjust retrieval strategies and retry.
 """)
 
 # Check for API key
-api_key = os.environ.get("OPENAI_API_KEY")
+api_key = os.environ.get("GROQ_API_KEY")
 if not api_key:
-    st.warning("⚠️ OPENAI_API_KEY is not set in your environment. The system can start, but you won't be able to run queries.")
+    st.warning("⚠️ GROQ_API_KEY is not set in your environment. The system can start, but you won't be able to run queries.")
 
 # Sidebar or main content for file upload
 st.header("1. Upload Document")
@@ -45,7 +49,7 @@ if uploaded_file is not None:
             if not query.strip():
                 st.error("Please enter a question.")
             elif not api_key:
-                st.error("OPENAI_API_KEY is missing. Cannot execute the RAG pipeline.")
+                st.error("GROQ_API_KEY is missing. Cannot execute the RAG pipeline.")
             else:
                 with st.spinner("Running Adaptive RAG Pipeline..."):
                     # Build the graph

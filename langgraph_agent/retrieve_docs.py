@@ -1,11 +1,15 @@
 import os
 import json
 
+from dotenv import load_dotenv
 from openai import OpenAI
 from qdrant_client import QdrantClient
 from qdrant_client.models import VectorParams, Distance, PointStruct
 from fastembed import TextEmbedding
 from fastembed.rerank.cross_encoder import TextCrossEncoder
+
+# Load environment variables from .env file
+load_dotenv()
 
 
 def embed_docs(text):
@@ -145,7 +149,11 @@ def generate_answer(query: str, retrieved_docs: list[str]) -> str:
     Returns:
         str: The generated answer from the LLM.
     """
-    client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+    # Use Groq's OpenAI-compatible API
+    client = OpenAI(
+        api_key=os.environ.get("GROQ_API_KEY"),
+        base_url="https://api.groq.com/openai/v1"
+    )
 
     formatted_docs = "\n\n".join(f"[Document {i+1}]\n{doc}" for i, doc in enumerate(retrieved_docs))
     system_content = (
@@ -154,14 +162,14 @@ def generate_answer(query: str, retrieved_docs: list[str]) -> str:
     )
 
     ai_answer = client.chat.completions.create(
-        model="gpt-4o",
+        model="openai/gpt-oss-120b",
         messages=[
             {
-                "role": "developer", 
+                "role": "system",
                 "content": system_content
             },
             {
-                "role": "user", 
+                "role": "user",
                 "content": query
             }
         ]
@@ -211,9 +219,13 @@ def llm_judge(query, retrieved_docs, answer):
         dict: A dictionary containing the evaluation results.
     """
     prompt = llm_judge_prompt.format(query=query, retrieved_docs=retrieved_docs, answer=answer)
-    client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+    # Use Groq's OpenAI-compatible API
+    client = OpenAI(
+        api_key=os.environ.get("GROQ_API_KEY"),
+        base_url="https://api.groq.com/openai/v1"
+    )
     response = client.chat.completions.create(
-        model="gpt-4o-mini",
+        model="openai/gpt-oss-20b",
         messages=[{"role": "user", "content": prompt}],
         response_format={"type": "json_object"}
     )

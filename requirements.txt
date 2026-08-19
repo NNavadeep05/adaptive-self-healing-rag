@@ -11,3 +11,4 @@ pypdf>=6.5.0
 qdrant-client>=1.16.2
 sentence-transformers>=5.2.0
 streamlit>=1.52
+python-dotenv>=1.0.0
