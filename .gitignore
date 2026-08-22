@@ -3,3 +3,7 @@ venv/
 __pycache__/
 *.pyc
 .env
+# Local test files
+test_*.py
+test_document.*
+Navadeep_Nandedapu_Resume.pdf
