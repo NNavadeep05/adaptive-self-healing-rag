@@ -2,152 +2,26 @@
 
 **Author:** Navadeep Nandedapu
 
-## Overview
+A Retrieval-Augmented Generation (RAG) service that evaluates its own retrieval quality at runtime and attempts to recover from failed retrievals — without requiring a manual retry or a redeployment.
 
-Adaptive Self-Healing RAG is a document Q&A application built with Python, LangGraph, Qdrant, FastEmbed, Groq, and Streamlit.
+Built with **Python, LangGraph, Qdrant, FastEmbed, Groq, FastAPI, Docker, and Streamlit**, the system exposes both a **REST API** for programmatic/service-to-service integration and a **Streamlit UI** for interactive use, with the backend shipped as a **Docker container** for consistent deployment.
 
-Unlike a single-shot RAG pipeline, the system evaluates the retrieved context and generated answer before returning the result. If the retrieved documents are irrelevant or insufficient, the LangGraph workflow automatically retries retrieval with reranking enabled and an increased retrieval budget.
+---
 
-## How It Works
+## Why It's Different
 
-```text
-PDF
- ↓
-Document Loading
- ↓
-Dense Embedding
- ↓
-Qdrant Vector Store
- ↓
-Dense Retrieval
- ↓
-Generate Answer
- ↓
-LLM Judge
- ↓
-Good → Return Answer
- ↓
-Not Good
- ↓
-Enable Reranking
- ↓
-Increase Retrieval
- ↓
-Generate Again
-```
+Most RAG pipelines are single-shot: retrieve once, generate once, return whatever comes out — even if the retrieved context was irrelevant or incomplete.
 
-## Key Features
+This system treats retrieval as a step that can fail, and attempts to recover from that failure automatically:
 
-* **PDF-based question answering:** Upload a PDF and ask questions about its contents.
-* **Dense vector retrieval with Qdrant:** Stores document embeddings and retrieves relevant chunks using cosine similarity.
-* **Cross-encoder reranking:** Reorders retrieved documents using deeper query-document relevance scoring when retrieval fails.
-* **LLM-based answer generation:** Uses Groq's OpenAI-compatible API for answer generation.
-* **LLM-as-a-judge evaluation:** Evaluates retrieved context and generated answers for relevance, sufficiency, and overall quality.
-* **Conditional self-healing:** LangGraph detects retrieval failures and routes the workflow back through retrieval.
-* **Adaptive retrieval:** Failed retrieval can trigger reranking and an increased retrieval count.
-* **Vector-store reuse across retries:** Reuses the in-memory Qdrant store instead of re-embedding the document for every retry.
-* **Streamlit interface:** Provides an interactive PDF Q&A interface with evaluation results and healing traces.
-* **Execution trace:** Displays the final retrieval mode, retrieval budget, and number of retries.
+1. Retrieve context and generate an answer.
+2. An LLM judge scores the retrieved context and the generated answer for relevance and sufficiency.
+3. If the result is inadequate, the workflow **attempts to recover** — it re-enters retrieval with cross-encoder reranking enabled and a larger retrieval budget, then regenerates. This retry is bounded by a maximum retry count; if retries are exhausted, the workflow still returns the current result rather than retrying indefinitely.
+4. The vector store is reused across retries, so no document is re-embedded mid-request.
 
-## Project Structure
+The result is a service that attempts to degrade gracefully instead of silently returning a wrong answer — which is the behavior you want from something running behind an API, not just a notebook.
 
-```text
-adaptive-self-healing-rag/
-├── app.py                           # Streamlit UI frontend
-├── requirements.txt                 # Project dependencies
-└── langgraph_agent/
-    ├── document_loader.py           # PDF text extraction and chunking
-    ├── retrieve_docs.py             # Embedding, retrieval, reranking, and LLM calls
-    ├── nodes.py                     # LangGraph nodes and self-healing logic
-    ├── graph.py                     # LangGraph cyclic workflow compilation
-    └── __init__.py                  # Python package marker
-```
-
-## How to Run
-
-These instructions assume **Windows**, **PowerShell**, and **Python 3.11+**.
-
-### 1. Clone the repository
-
-```powershell
-git clone https://github.com/NNavadeep05/adaptive-self-healing-rag.git
-cd adaptive-self-healing-rag
-```
-
-### 2. Create a virtual environment
-
-```powershell
-python -m venv .venv
-```
-
-### 3. Activate the virtual environment
-
-```powershell
-.\.venv\Scripts\Activate.ps1
-```
-
-### 4. Install dependencies
-
-```powershell
-pip install -r requirements.txt
-```
-
-### 5. Create the `.env` file
-
-Create a file named `.env` in the project root:
-
-```text
-GROQ_API_KEY=your_groq_api_key_here
-```
-
-The `.env` file is ignored by Git and should never be committed to the repository.
-
-### 6. Run the Streamlit application
-
-```powershell
-streamlit run app.py
-```
-
-## Usage
-
-1. Open the Streamlit application in your browser.
-2. Upload a PDF document.
-3. Enter a question about the document.
-4. Click **Run RAG**.
-5. View the generated answer.
-6. View the LLM judge score.
-7. View the **Self-Healing Trace** to see whether retrieval recovery was triggered.
-8. Open **View Execution Details** to inspect the final retrieval mode, retrieval budget, and retry count.
-
-## What Makes It Self-Healing?
-
-The system does not blindly accept the first retrieval result.
-
-After retrieval and answer generation, an LLM judge evaluates whether the retrieved documents are relevant and whether the context is sufficient for answering the question.
-
-If the result is inadequate, LangGraph routes the workflow back to retrieval. The system can enable cross-encoder reranking and increase the number of retrieved documents before generating the answer again.
-
-The vector store is reused across retries, avoiding unnecessary re-embedding of the uploaded document.
-
-For example:
-
-```text
-Initial Retrieval
-      ↓
-Irrelevant Context
-      ↓
-LLM Judge Detects Failure
-      ↓
-Self-Healing Triggered
-      ↓
-Reranking Enabled
-      ↓
-Retrieval Count Increased
-      ↓
-Generate Again
-      ↓
-Correct Answer
-```
+---
 
 ## Architecture
 
@@ -192,15 +66,152 @@ Correct Answer
                                   └──────► Retrieval
 ```
 
-## Example Self-Healing Execution
+This cyclic control flow — retrieve → judge → conditionally re-route — is implemented as a **LangGraph** graph, which is what allows retries to be a first-class part of the workflow rather than an ad-hoc `try/except` around the pipeline.
 
-A failed initial retrieval can produce a trace such as:
+---
+
+## Key Capabilities
+
+| Capability | Description |
+|---|---|
+| **PDF-based Q&A** | Upload a PDF and query its contents. |
+| **Dense vector retrieval** | Qdrant-backed retrieval using cosine similarity over embedded chunks. |
+| **Cross-encoder reranking** | Applied selectively via `jinaai/jina-reranker-v2-base-multilingual`, only when initial retrieval is judged insufficient — keeps normal-path latency low. |
+| **LLM-as-a-judge evaluation** | A separate LLM call (`gpt-oss-20b` via Groq) scores retrieved context and generated answers for relevance, sufficiency, and overall quality. |
+| **Self-healing control flow** | LangGraph detects retrieval failure and re-routes the workflow automatically, up to a fixed retry limit. |
+| **Adaptive retrieval budget** | Retrieval count increases on retry instead of using a fixed top-k for every query. |
+| **Vector-store reuse** | The in-memory Qdrant store persists across retries — no redundant re-embedding. |
+| **REST API (FastAPI)** | `GET /health` and `POST /query` for integration into other services or pipelines. |
+| **Dockerized backend** | Consistent, portable deployment across environments. |
+| **Streamlit UI** | Interactive interface with visibility into judge scores and healing traces. |
+| **Execution tracing** | Every response reports final retrieval mode, retrieval budget, and retry count — useful for debugging and understanding recovery behavior. |
+
+---
+
+## Project Structure
 
 ```text
-Irrelevant docs → enabled rerank + increased retrieval budget by 2
+adaptive-self-healing-rag/
+├── api.py                           # FastAPI backend: GET /health, POST /query
+├── app.py                           # Streamlit UI frontend
+├── requirements.txt                 # Project dependencies
+├── Dockerfile                       # Container build for the backend
+└── langgraph_agent/
+    ├── document_loader.py           # PDF text extraction and chunking
+    ├── retrieve_docs.py             # Embedding, retrieval, reranking, and LLM calls
+    ├── nodes.py                     # LangGraph nodes and self-healing logic
+    ├── graph.py                     # LangGraph cyclic workflow compilation
+    └── __init__.py                  # Python package marker
 ```
 
-The execution details then show:
+---
+
+## Getting Started
+
+These instructions assume **Windows**, **PowerShell**, and **Python 3.11+**. Docker instructions are OS-agnostic.
+
+### 1. Clone the repository
+
+```powershell
+git clone https://github.com/NNavadeep05/adaptive-self-healing-rag.git
+cd adaptive-self-healing-rag
+```
+
+### 2. Configure environment variables
+
+Create a `.env` file in the project root:
+
+```text
+GROQ_API_KEY=your_groq_api_key_here
+```
+
+`.env` is git-ignored and should never be committed.
+
+### 3. Run locally (Streamlit)
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+streamlit run app.py
+```
+
+### 4. Run via Docker (FastAPI backend)
+
+```powershell
+docker build -t adaptive-self-healing-rag .
+docker run --env-file .env -p 8000:8000 adaptive-self-healing-rag
+```
+
+The container runs the FastAPI backend (`api.py`) via Uvicorn on port 8000. The Streamlit UI is not started inside the container — it runs separately using `streamlit run app.py`.
+
+---
+
+## Usage
+
+### Streamlit UI
+
+1. Open the Streamlit app in your browser.
+2. Upload a PDF document.
+3. Enter a question about the document.
+4. Click **Run RAG**.
+5. Review the generated answer and LLM judge score.
+6. Check the **Self-Healing Trace** for any retrieval recovery steps.
+7. Expand **View Execution Details** for the final retrieval mode, retrieval budget, and retry count.
+
+### REST API
+
+Once running (locally or via Docker), the FastAPI service exposes:
+
+- **`GET /health`** — returns service status.
+- **`POST /query`** — accepts a PDF and a question, returns the answer, judge score, and execution trace.
+
+Both endpoints return the same answer, judge score, and execution trace surfaced in the Streamlit UI — suitable for integration into other applications or automated pipelines.
+
+---
+
+## How Self-Healing Works
+
+The system does not accept the first retrieval result unconditionally.
+
+After retrieval and answer generation, an LLM judge evaluates whether the retrieved documents are relevant and whether the context is sufficient to answer the question. If not, LangGraph routes the workflow back to retrieval — enabling cross-encoder reranking and increasing the retrieval count before generating again. The vector store is reused throughout, so retries add latency but not redundant embedding cost.
+
+**Models used:**
+
+- Embedding: FastEmbed, `sentence-transformers/all-MiniLM-L6-v2`
+- Reranker: `jinaai/jina-reranker-v2-base-multilingual`
+- Generation: `openai/gpt-oss-120b` via Groq
+- Judge: `openai/gpt-oss-20b` via Groq
+
+**Retry behavior:**
+
+- Initial retrieval budget: 2
+- Retry triggered when the judge's score is below 0.8, or a failure reason is present
+- `irrelevant_docs` → retrieval budget increases by 2, reranking enabled
+- `missing_context` → retrieval budget increases by 3, reranking enabled
+- Maximum retries: 3 — once reached, the workflow returns the current result rather than retrying further
+
+**Example trace of a recovered query:**
+
+```text
+Initial Retrieval
+      ↓
+Irrelevant Context
+      ↓
+LLM Judge Detects Failure
+      ↓
+Self-Healing Triggered
+      ↓
+Reranking Enabled
+      ↓
+Retrieval Count Increased
+      ↓
+Generate Again
+      ↓
+Correct Answer
+```
+
+**Resulting execution details:**
 
 ```text
 Final Retrieval Mode: dense_rerank
@@ -208,4 +219,4 @@ Final Retrieval Budget: 4
 Total Retries: 1
 ```
 
-This allows the user to see not only the final answer, but also how the system recovered from an unsuccessful initial retrieval.
+This gives callers — whether a human in the Streamlit UI or a service calling the API — visibility into not just the final answer, but how the system arrived at it.
