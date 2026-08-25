@@ -7,3 +7,6 @@ __pycache__/
 test_*.py
 test_document.*
 Navadeep_Nandedapu_Resume.pdf
+
+# Local Qdrant storage
+qdrant_data/

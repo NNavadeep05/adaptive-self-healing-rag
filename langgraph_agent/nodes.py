@@ -1,6 +1,7 @@
 from typing import TypedDict, List, Any
+
 from langgraph_agent.retrieve_docs import (
-    embed_docs,
+    get_qdrant_client,
     get_doc_answer,
     rerank,
     generate_answer,
@@ -9,7 +10,7 @@ from langgraph_agent.retrieve_docs import (
 
 
 class RAGState(TypedDict):
-    text: List[str]
+    text: List[dict]
     query: str
     retrieved_docs: List[str]
     retrieval_mode: str
@@ -26,24 +27,19 @@ class RAGState(TypedDict):
 def retrieve_node(state: RAGState):
     query = state["query"]
     budget = state["retrieval_budget"]
-    mode = state["retrieval_mode"]
-    text = state["text"]
 
-    # Check if we already embedded the documents
-    client = state.get("vector_store")
+    # Connect to the external Qdrant service.
+    # QDRANT_URL is configured through the environment.
+    client = get_qdrant_client()
 
-    if not client:
-        # Embed documents only if not already done
-        client = embed_docs(text)
-
-    # Retrieve documents
+    # Retrieve from the already-ingested persistent knowledge base.
     results = get_doc_answer(
         client=client,
         query=query,
         k=budget,
     )
 
-    # Apply reranking when required
+    # Apply reranking when healing is triggered.
     if state["retrieval_mode"] == "dense_rerank":
         results = rerank(
             query=query,
@@ -52,7 +48,10 @@ def retrieve_node(state: RAGState):
 
     return {
         "retrieved_docs": results,
-        "healing_trace": state.get("healing_trace", []),
+        "healing_trace": state.get(
+            "healing_trace",
+            []
+        ),
         "vector_store": client,
     }
 
@@ -63,7 +62,9 @@ def generate_node(state: RAGState):
         retrieved_docs=state["retrieved_docs"],
     )
 
-    return {"answer": answer}
+    return {
+        "answer": answer
+    }
 
 
 def score_node(state: RAGState):
@@ -77,7 +78,6 @@ def score_node(state: RAGState):
     relevant = judge["relevant_docs"]
     sufficient = judge["sufficient_context"]
 
-    # Determine failure reason
     if not relevant:
         failure_reason = "irrelevant_docs"
     elif not sufficient:
@@ -92,16 +92,17 @@ def score_node(state: RAGState):
 
 
 def should_retry(state: RAGState):
-    # Stop once the maximum number of retries has been reached
+    # Stop once the maximum retry limit is reached.
     if state["retry_count"] >= state["max_retries"]:
         return "end"
 
-    # Existing tests may not provide failure_reason,
-    # so default to no explicit failure.
-    failure_reason = state.get("failure_reason", "none")
+    failure_reason = state.get(
+        "failure_reason",
+        "none"
+    )
 
-    # Retry if either the score is low or the judge identified
-    # an explicit retrieval/context failure.
+    # Retry when the judge identifies a retrieval/context
+    # failure or when the overall score is below the threshold.
     if state["score"] < 0.8 or failure_reason != "none":
         return "retry"
 

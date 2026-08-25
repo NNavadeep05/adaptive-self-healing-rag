@@ -1,5 +1,6 @@
 import os
 import json
+import uuid
 
 from dotenv import load_dotenv
 from openai import OpenAI
@@ -8,100 +9,170 @@ from qdrant_client.models import VectorParams, Distance, PointStruct
 from fastembed import TextEmbedding
 from fastembed.rerank.cross_encoder import TextCrossEncoder
 
-# Load environment variables from .env file
+
+# Load environment variables
 load_dotenv()
 
 
-def embed_docs(text):
+# ---------------------------------------------------------
+# QDRANT CONFIGURATION
+# ---------------------------------------------------------
+
+QDRANT_URL = os.environ.get(
+    "QDRANT_URL",
+    "http://localhost:6333"
+)
+
+COLLECTION_NAME = "documents"
+
+
+def get_qdrant_client():
     """
-    Embed document chunks and store them in an in-memory Qdrant collection.
+    Create a client connected to the Qdrant server.
 
-    Args:
-        text (list[str]): Document chunks to embed.
+    Local development:
+        http://localhost:6333
 
-    Returns:
-        QdrantClient: Client containing the embedded document collection.
+    Docker:
+        http://qdrant:6333
     """
 
-    # Initialize the embedding model
+    return QdrantClient(
+        url=QDRANT_URL
+    )
+
+
+# ---------------------------------------------------------
+# EMBEDDING + STORAGE
+# ---------------------------------------------------------
+
+def embed_docs(chunks):
+    """
+    Embed document chunks and store them in Qdrant.
+
+    Each chunk stores:
+        - description
+        - source_pdf
+
+    Qdrant itself provides persistence through its Docker
+    storage volume.
+    """
+
     encoder_name = "sentence-transformers/all-MiniLM-L6-v2"
-    embedding_model = TextEmbedding(model_name=encoder_name)
 
-    # Convert every text chunk into an embedding vector
-    vectors = list(embedding_model.embed(text))
+    # Initialize embedding model
+    embedding_model = TextEmbedding(
+        model_name=encoder_name
+    )
 
-    # Create an in-memory Qdrant database
-    client = QdrantClient(":memory:")
+    # Connect to Qdrant server
+    client = get_qdrant_client()
 
-    # Create the vector collection
-    if not client.collection_exists("test_collection"):
+    # Create collection if it does not exist
+    if not client.collection_exists(COLLECTION_NAME):
+
         client.create_collection(
-            collection_name="test_collection",
+            collection_name=COLLECTION_NAME,
             vectors_config={
                 "embedding": VectorParams(
-                    size=client.get_embedding_size(encoder_name),
+                    size=client.get_embedding_size(
+                        encoder_name
+                    ),
                     distance=Distance.COSINE
                 )
             }
         )
 
-    # Store each chunk together with its embedding
-    client.upload_points(
-        collection_name="test_collection",
-        points=[
+    # Extract chunk text
+    texts = [
+        chunk["text"]
+        for chunk in chunks
+    ]
+
+    # Generate embeddings
+    vectors = list(
+        embedding_model.embed(texts)
+    )
+
+    # Create Qdrant points
+    points = []
+
+    for chunk, vector in zip(chunks, vectors):
+
+        point_id = str(
+            uuid.uuid4()
+        )
+
+        points.append(
             PointStruct(
-                id=idx,
-                payload={"description": chunk},
-                vector={"embedding": vector}
+                id=point_id,
+                payload={
+                    "description": chunk["text"],
+                    "source_pdf": chunk["source_pdf"]
+                },
+                vector={
+                    "embedding": vector
+                }
             )
-            for idx, (chunk, vector) in enumerate(zip(text, vectors))
-        ]
+        )
+
+    # Upload to Qdrant
+    client.upload_points(
+        collection_name=COLLECTION_NAME,
+        points=points
     )
 
     return client
 
 
-def get_doc_answer(client, query: str, k: int = 2) -> list[str]:
+# ---------------------------------------------------------
+# RETRIEVAL
+# ---------------------------------------------------------
+
+def get_doc_answer(
+    client,
+    query: str,
+    k: int = 2
+) -> list[str]:
     """
     Retrieve the top-k document chunks relevant to a query.
-
-    Args:
-        client: Qdrant client containing the document vectors.
-        query: User's search query.
-        k: Number of documents to retrieve.
-
-    Returns:
-        List of retrieved document chunks.
     """
 
-    # Initialize the same embedding model used for documents
     encoder_name = "sentence-transformers/all-MiniLM-L6-v2"
-    embedding_model = TextEmbedding(model_name=encoder_name)
 
-    # Convert the user query into an embedding
+    # Initialize embedding model
+    embedding_model = TextEmbedding(
+        model_name=encoder_name
+    )
+
+    # Embed user query
     query_embedding = list(
         embedding_model.query_embed(query)
     )[0]
 
-    # Search Qdrant for the most similar document vectors
+    # Search Qdrant
     results = client.query_points(
-        collection_name="test_collection",
+        collection_name=COLLECTION_NAME,
         using="embedding",
         query=query_embedding,
         with_payload=True,
         limit=k
     )
 
-    # Print retrieved documents and their similarity scores for inspection
     print("\n--- Qdrant Retrieval Results ---")
+
     for i, point in enumerate(results.points):
+
         print(
-            f"Rank {i+1} | Score: {point.score:.4f} | "
+            f"Rank {i + 1} | "
+            f"Score: {point.score:.4f} | "
+            f"Source: {point.payload.get('source_pdf')} | "
             f"Text: {point.payload['description']}"
         )
+
     print("--------------------------------\n")
 
-    # Extract the original text from the retrieved points
+    # Return retrieved text
     retrieved_docs = [
         point.payload["description"]
         for point in results.points
@@ -110,66 +181,79 @@ def get_doc_answer(client, query: str, k: int = 2) -> list[str]:
     return retrieved_docs
 
 
-def rerank(query: str, retrieved_docs: list[str]) -> list[str]:
+# ---------------------------------------------------------
+# RERANKING
+# ---------------------------------------------------------
+
+def rerank(
+    query: str,
+    retrieved_docs: list[str]
+) -> list[str]:
     """
-    Rerank a list of retrieved documents using a cross-encoder model.
-
-    Args:
-        query (str): The user's query.
-        retrieved_docs (list[str]): Candidate documents from retrieval.
-
-    Returns:
-        list[str]: Documents sorted by cross-encoder relevance.
+    Rerank retrieved documents using a cross-encoder.
     """
 
-    # Initialize the cross-encoder reranker
     reranker = TextCrossEncoder(
         model_name="jinaai/jina-reranker-v2-base-multilingual"
     )
 
-    # Get relevance scores for each document
-    scores = list(reranker.rerank(query, retrieved_docs))
+    scores = list(
+        reranker.rerank(
+            query,
+            retrieved_docs
+        )
+    )
 
-    # Pair each document with its score
-    scored_docs = list(zip(retrieved_docs, scores))
+    scored_docs = list(
+        zip(
+            retrieved_docs,
+            scores
+        )
+    )
 
-    # Sort by relevance score in descending order
-    scored_docs.sort(key=lambda x: x[1], reverse=True)
+    scored_docs.sort(
+        key=lambda x: x[1],
+        reverse=True
+    )
 
-    # Extract the reordered documents
-    reranked_docs = [doc for doc, score in scored_docs]
+    return [
+        doc
+        for doc, score in scored_docs
+    ]
 
-    return reranked_docs
 
+# ---------------------------------------------------------
+# ANSWER GENERATION
+# ---------------------------------------------------------
 
-def generate_answer(query: str, retrieved_docs: list[str]) -> str:
+def generate_answer(
+    query: str,
+    retrieved_docs: list[str]
+) -> str:
     """
-    Generate an answer to a query based on retrieved documents using an LLM.
-
-    Args:
-        query (str): The user query.
-        retrieved_docs (list[str]): Candidate documents.
-
-    Returns:
-        str: The generated answer.
+    Generate an answer using retrieved documents.
     """
 
-    # Use Groq's OpenAI-compatible API
     client = OpenAI(
-        api_key=os.environ.get("GROQ_API_KEY"),
+        api_key=os.environ.get(
+            "GROQ_API_KEY"
+        ),
         base_url="https://api.groq.com/openai/v1"
     )
 
     formatted_docs = "\n\n".join(
-        f"[Document {i+1}]\n{doc}"
+        f"[Document {i + 1}]\n{doc}"
         for i, doc in enumerate(retrieved_docs)
     )
 
     system_content = (
-        f"Use the following documents to answer the user question:\n\n"
+        "Use the following documents to answer "
+        "the user question:\n\n"
         f"{formatted_docs}\n\n"
-        "Answer the question using only the provided documents. "
-        "If the answer cannot be found in the documents, respond with "
+        "Answer the question using only the "
+        "provided documents. "
+        "If the answer cannot be found in the "
+        "documents, respond with "
         "'I didn't find any relevant documents.'"
     )
 
@@ -190,7 +274,10 @@ def generate_answer(query: str, retrieved_docs: list[str]) -> str:
     return ai_answer.choices[0].message.content
 
 
-# LLM-as-a-Judge Prompt
+# ---------------------------------------------------------
+# LLM-AS-A-JUDGE
+# ---------------------------------------------------------
+
 llm_judge_prompt = """
 You are an expert evaluator of Retrieval-Augmented Generation systems.
 
@@ -226,18 +313,13 @@ Guidelines:
 """
 
 
-# Function LLM-as-a-Judge
-def llm_judge(query, retrieved_docs, answer):
+def llm_judge(
+    query,
+    retrieved_docs,
+    answer
+):
     """
-    Evaluate the answer using the retrieved documents.
-
-    Args:
-        query (str): The user query.
-        retrieved_docs (list[str]): The retrieved documents.
-        answer (str): The generated answer.
-
-    Returns:
-        dict: Evaluation results.
+    Evaluate the generated answer using the retrieved documents.
     """
 
     prompt = llm_judge_prompt.format(
@@ -246,9 +328,10 @@ def llm_judge(query, retrieved_docs, answer):
         answer=answer
     )
 
-    # Use Groq's OpenAI-compatible API
     client = OpenAI(
-        api_key=os.environ.get("GROQ_API_KEY"),
+        api_key=os.environ.get(
+            "GROQ_API_KEY"
+        ),
         base_url="https://api.groq.com/openai/v1"
     )
 
@@ -260,7 +343,11 @@ def llm_judge(query, retrieved_docs, answer):
                 "content": prompt
             }
         ],
-        response_format={"type": "json_object"}
+        response_format={
+            "type": "json_object"
+        }
     )
 
-    return json.loads(response.choices[0].message.content)
+    return json.loads(
+        response.choices[0].message.content
+    )
