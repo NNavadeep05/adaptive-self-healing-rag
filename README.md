@@ -1,4 +1,4 @@
-# SentinelRAG | Adaptive Self-Healing RAG Pipeline
+# SentinelRAG | Adaptive Self-Healing RAG System
 
 A Retrieval-Augmented Generation service that evaluates the quality of its own output at query time and automatically recovers when it detects a bad result — instead of silently returning an answer built on irrelevant context, missing information, or unsupported claims.
 
