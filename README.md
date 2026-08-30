@@ -1,6 +1,6 @@
-# Adaptive Self-Healing RAG
+# SentinelRAG | Adaptive Self-Healing RAG Pipeline
 
-A Retrieval-Augmented Generation service that evaluates the quality of its own retrieval at query time and automatically recovers when it detects a bad result — instead of silently returning an answer built on irrelevant or missing context.
+A Retrieval-Augmented Generation service that evaluates the quality of its own output at query time and automatically recovers when it detects a bad result — instead of silently returning an answer built on irrelevant context, missing information, or unsupported claims.
 
 **Author:** Navadeep Nandedapu
 
@@ -8,17 +8,18 @@ A Retrieval-Augmented Generation service that evaluates the quality of its own r
 
 ## The Problem
 
-Organizations store information across many documents and sources, and finding an answer usually means manually searching through them. A standard RAG pipeline automates the search, but it is single-shot: it retrieves once, generates once, and returns whatever comes out, even when the retrieved context was irrelevant or incomplete. The user has no way to know the answer was built on bad context, and the system has no way to try again.
+Organizations store information across many documents and sources, and finding an answer usually means manually searching through them. A standard RAG pipeline automates the search, but it is single-shot: it retrieves once, generates once, and returns whatever comes out, even when the retrieved context was irrelevant, incomplete, or when the generated answer drifts from what the context actually supports. The user has no way to know the answer was built on bad context, and the system has no way to try again.
 
-This project treats retrieval as a step that can fail, and gives the system a way to notice and recover.
+This project treats retrieval and generation as steps that can fail, and gives the system a way to notice and recover.
 
 ## How It Works
 
 1. **Retrieve** relevant chunks for the query and **generate** an answer from them.
-2. An **LLM judge** independently evaluates whether the retrieved context was relevant and sufficient, and scores the answer.
-3. If the result is inadequate, the workflow **routes back to retrieval** with a larger retrieval budget and cross-encoder reranking enabled, then generates and judges again.
-4. Retries are capped by a maximum retry count, so a genuinely difficult query fails gracefully instead of looping forever.
-5. The vector store is **reused across retries** — documents are embedded once at ingestion time, not re-embedded on every retry.
+2. A **self-verification stage** checks whether the generated answer is actually supported by the retrieved context, flagging unsupported or fabricated claims.
+3. An **LLM judge** independently evaluates whether the retrieved context was relevant and sufficient, and scores the answer.
+4. If either stage finds the result inadequate, the workflow **routes back to retrieval** with a larger retrieval budget and cross-encoder reranking enabled, then generates, verifies, and judges again.
+5. Retries are capped by a maximum retry count, so a genuinely difficult query fails gracefully instead of looping forever.
+6. The vector store is **reused across retries** — documents are embedded once at ingestion time, not re-embedded on every retry.
 
 ```
               PDF / External Source
@@ -42,6 +43,9 @@ This project treats retrieval as a step that can fail, and gives the system a wa
                Answer Generation
                        │
                        ▼
+               Self-Verification
+                       │
+                       ▼
                   LLM Judge
                        │
               ┌────────┴────────┐
@@ -61,7 +65,9 @@ This project treats retrieval as a step that can fail, and gives the system a wa
                                  └──────► Retrieve Again
 ```
 
-The retrieve → generate → judge → conditionally retry loop is implemented as an explicit graph using **LangGraph**, so the recovery behavior is part of the application's control flow rather than a manual retry wrapped around it.
+The retrieve → generate → verify → judge → conditionally retry loop is implemented as an explicit graph using **LangGraph**, so the recovery behavior is part of the application's control flow rather than a manual retry wrapped around it.
+
+Verification runs after generation rather than before retrieval, since checking whether a claim is supported requires a claim to check — it can only happen once an answer exists.
 
 ### Retry logic
 
@@ -71,10 +77,13 @@ A retry is triggered when:
 score < 0.8
 OR
 failure_reason != "none"
+OR
+verification_status == "unsupported"
 ```
 
 | Failure reason | Recovery action |
 |---|---|
+| `unsupported_claims` | Increase retrieval budget by 2, enable reranking |
 | `irrelevant_docs` | Increase retrieval budget by 2, enable reranking |
 | `missing_context` | Increase retrieval budget by 3, enable reranking |
 | Max retries reached | Stop retrying, return the current result |
@@ -85,8 +94,9 @@ failure_reason != "none"
 - **Source-aware chunks** — every chunk retains its originating document or URL
 - **Dense vector retrieval** over a persistent Qdrant collection
 - **Cross-encoder reranking**, applied selectively during recovery rather than on every query
-- **LLM-as-judge evaluation** of retrieved context and generated answers
-- **Self-healing control flow** with a bounded retry loop
+- **Self-verification** — checks whether generated claims are actually supported by the retrieved context
+- **LLM-as-judge evaluation** of retrieved context relevance and sufficiency
+- **Self-healing control flow** with a bounded retry loop, triggered by either verification or judge failures
 - **REST API** (`/health`, `/ingest`, `/query`) for service-to-service use
 - **Streamlit UI** for interactive ingestion and querying
 - **Execution tracing** — every response reports retrieval mode, retrieval budget, retry count, and the healing actions taken
@@ -99,8 +109,8 @@ failure_reason != "none"
 | Document Loader | Loads PDFs from local paths or URLs, chunks them, retains source metadata |
 | FastEmbed | Converts chunks into dense vector embeddings |
 | Qdrant | Stores embeddings, performs vector similarity search |
-| LangGraph | Controls retrieval, generation, evaluation, and retry flow |
-| Groq | Serves the generation and judge LLM calls |
+| LangGraph | Controls retrieval, generation, verification, judging, and retry flow |
+| Groq | Serves the generation, verification, and judge LLM calls |
 | FastAPI | Exposes the backend over REST |
 | Streamlit | Interactive frontend |
 | Docker | Packages the backend into a reproducible container |
@@ -112,7 +122,10 @@ failure_reason != "none"
 | Embedding | `sentence-transformers/all-MiniLM-L6-v2` (via FastEmbed) |
 | Reranking | `jinaai/jina-reranker-v2-base-multilingual` |
 | Generation | `openai/gpt-oss-120b` (via Groq) |
+| Self-verification | `openai/gpt-oss-20b` (via Groq) |
 | Judge | `openai/gpt-oss-20b` (via Groq) |
+
+Self-verification and judging are two independent checks that both use the same underlying model but evaluate different things: verification checks whether the answer's claims are supported by the retrieved context, while the judge evaluates the relevance and sufficiency of the retrieved context itself.
 
 ## Project Structure
 
@@ -126,7 +139,7 @@ adaptive-self-healing-rag/
 ├── .gitignore
 └── langgraph_agent/
     ├── document_loader.py    # PDF loading, URL download, chunking, metadata
-    ├── retrieve_docs.py      # Qdrant client, embeddings, retrieval, reranking, LLM calls
+    ├── retrieve_docs.py      # Qdrant client, embeddings, retrieval, reranking, verification, judge, generation
     ├── nodes.py               # LangGraph nodes and self-healing logic
     ├── graph.py                # LangGraph workflow construction
     └── __init__.py
@@ -212,17 +225,19 @@ POST /query
 { "question": "..." }
 ```
 
-Returns:
+Returns (example of a healed response, after a retry):
 
 ```json
 {
   "answer": "...",
-  "score": 0.95,
+  "score": 0.9,
+  "verification_status": "supported",
+  "verification_score": 0.9,
   "retrieval_mode": "dense_rerank",
   "retrieval_budget": 4,
   "retry_count": 1,
   "healing_trace": [
-    "Irrelevant docs → enabled rerank + increased retrieval budget by 2"
+    "Unsupported claims → enabled reranking + increased retrieval budget by 2"
   ]
 }
 ```
