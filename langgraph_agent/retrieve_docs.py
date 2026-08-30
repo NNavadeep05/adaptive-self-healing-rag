@@ -54,8 +54,8 @@ def embed_docs(chunks):
         - description
         - source_pdf
 
-    Qdrant itself provides persistence through its Docker
-    storage volume.
+    Qdrant provides persistent storage through
+    the external Qdrant service.
     """
 
     encoder_name = "sentence-transformers/all-MiniLM-L6-v2"
@@ -223,6 +223,24 @@ def rerank(
 
 
 # ---------------------------------------------------------
+# GROQ CLIENT
+# ---------------------------------------------------------
+
+def get_groq_client():
+    """
+    Create the OpenAI-compatible client used to access
+    Groq-hosted models.
+    """
+
+    return OpenAI(
+        api_key=os.environ.get(
+            "GROQ_API_KEY"
+        ),
+        base_url="https://api.groq.com/openai/v1"
+    )
+
+
+# ---------------------------------------------------------
 # ANSWER GENERATION
 # ---------------------------------------------------------
 
@@ -232,14 +250,12 @@ def generate_answer(
 ) -> str:
     """
     Generate an answer using retrieved documents.
+
+    Generation model:
+        openai/gpt-oss-120b via Groq
     """
 
-    client = OpenAI(
-        api_key=os.environ.get(
-            "GROQ_API_KEY"
-        ),
-        base_url="https://api.groq.com/openai/v1"
-    )
+    client = get_groq_client()
 
     formatted_docs = "\n\n".join(
         f"[Document {i + 1}]\n{doc}"
@@ -272,6 +288,126 @@ def generate_answer(
     )
 
     return ai_answer.choices[0].message.content
+
+
+# ---------------------------------------------------------
+# SELF-VERIFICATION
+# ---------------------------------------------------------
+
+self_verification_prompt = """
+You are a verification module for a
+Retrieval-Augmented Generation system.
+
+Your task is to determine whether the generated answer
+is actually supported by the retrieved documents.
+
+User question:
+{query}
+
+Retrieved documents:
+{retrieved_docs}
+
+Generated answer:
+{answer}
+
+Evaluate whether the claims made in the generated answer
+are supported by the retrieved documents.
+
+Return ONLY valid JSON in this format:
+
+{{
+  "verification_status": "supported" | "partially_supported" | "unsupported" | "contradicted",
+  "verification_score": number between 0 and 1
+}}
+
+Guidelines:
+
+- "supported":
+  The retrieved documents provide sufficient evidence
+  for the important claims in the answer.
+
+- "partially_supported":
+  Some claims are supported, but important information
+  in the answer is missing from the retrieved documents.
+
+- "unsupported":
+  The answer contains claims that cannot be supported
+  by the retrieved documents.
+
+- "contradicted":
+  The retrieved documents directly contradict important
+  claims in the generated answer.
+
+- verification_score represents how strongly the
+  retrieved documents support the generated answer.
+
+- A fully supported answer should receive a high score.
+
+- An answer containing unsupported or hallucinated claims
+  should receive a low score.
+
+- Do not use outside knowledge.
+- Judge only whether the retrieved documents support
+  the generated answer.
+"""
+
+
+def self_verify(
+    query: str,
+    retrieved_docs: list[str],
+    answer: str
+) -> dict:
+    """
+    Verify whether the generated answer is supported
+    by the retrieved documents.
+
+    Uses GPT-OSS-20B via Groq as an LLM-based
+    entailment/faithfulness checker.
+
+    Returns:
+        {
+            "verification_status": ...,
+            "verification_score": ...
+        }
+    """
+
+    prompt = self_verification_prompt.format(
+        query=query,
+        retrieved_docs=retrieved_docs,
+        answer=answer
+    )
+
+    client = get_groq_client()
+
+    response = client.chat.completions.create(
+        model="openai/gpt-oss-20b",
+        messages=[
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ],
+        response_format={
+            "type": "json_object"
+        }
+    )
+
+    result = json.loads(
+        response.choices[0].message.content
+    )
+
+    return {
+        "verification_status": result.get(
+            "verification_status",
+            "unsupported"
+        ),
+        "verification_score": float(
+            result.get(
+                "verification_score",
+                0.0
+            )
+        )
+    }
 
 
 # ---------------------------------------------------------
@@ -320,6 +456,8 @@ def llm_judge(
 ):
     """
     Evaluate the generated answer using the retrieved documents.
+
+    Uses GPT-OSS-20B via Groq.
     """
 
     prompt = llm_judge_prompt.format(
@@ -328,12 +466,7 @@ def llm_judge(
         answer=answer
     )
 
-    client = OpenAI(
-        api_key=os.environ.get(
-            "GROQ_API_KEY"
-        ),
-        base_url="https://api.groq.com/openai/v1"
-    )
+    client = get_groq_client()
 
     response = client.chat.completions.create(
         model="openai/gpt-oss-20b",
