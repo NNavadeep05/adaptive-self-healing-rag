@@ -2,32 +2,56 @@ import os
 import tempfile
 
 import requests
+from bs4 import BeautifulSoup
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 
-def load_documents(pdfs):
+def load_documents(files):
     """
-    Load multiple local PDFs and split them into chunks for retrieval.
+    Load multiple local PDF or HTML files and split them into chunks.
 
     Args:
-        pdfs: List of local PDF file paths.
+        files: List of local PDF or HTML file paths.
 
     Returns:
-        A list of dictionaries containing chunk text and source PDF.
+        A list of dictionaries containing chunk text and source file.
     """
 
     all_docs = []
 
-    for pdf in pdfs:
-        loader = PyPDFLoader(pdf, mode="single")
-        docs = loader.load()
+    for file_path in files:
+        extension = os.path.splitext(file_path)[1].lower()
 
-        for doc in docs:
+        if extension == ".pdf":
+            loader = PyPDFLoader(file_path, mode="single")
+            docs = loader.load()
+
+            for doc in docs:
+                all_docs.append({
+                    "text": doc.page_content,
+                    "source_pdf": os.path.basename(file_path)
+                })
+
+        elif extension in [".html", ".htm"]:
+            with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+                html = f.read()
+
+            soup = BeautifulSoup(html, "html.parser")
+
+            # Remove HTML elements that do not contain useful document text.
+            for tag in soup(["script", "style", "noscript", "ix:header", "ix:hidden"]):
+                tag.decompose()
+
+            text = soup.get_text(separator="\n", strip=True)
+
             all_docs.append({
-                "text": doc.page_content,
-                "source_pdf": os.path.basename(pdf)
+                "text": text,
+                "source_pdf": os.path.basename(file_path)
             })
+
+        else:
+            raise ValueError(f"Unsupported file type: {extension}")
 
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=800,
