@@ -5,7 +5,7 @@
     "query": "What was Microsoft's total revenue for fiscal year 2026?",
     "target_companies": ["Microsoft"],
     "fact_type": "revenue",
-    "ground_truth": "",
+    "ground_truth": "331,839",
     "expected_answerable": true,
     "notes": "Single stated financial fact from Microsoft's 2026 10-K."
   },
@@ -15,7 +15,7 @@
     "query": "What was NVIDIA's total revenue for fiscal year 2026?",
     "target_companies": ["NVIDIA"],
     "fact_type": "revenue",
-    "ground_truth": "",
+    "ground_truth": "215,938",
     "expected_answerable": true,
     "notes": "Single stated financial fact from NVIDIA's 2026 10-K."
   },
@@ -25,7 +25,7 @@
     "query": "What was Walmart's total revenue for fiscal year 2026?",
     "target_companies": ["Walmart"],
     "fact_type": "revenue",
-    "ground_truth": "",
+    "ground_truth": "713.2 billion",
     "expected_answerable": true,
     "notes": "Single stated financial fact from Walmart's 2026 10-K."
   },
@@ -35,7 +35,7 @@
     "query": "What was Amazon's total net sales for fiscal year 2025?",
     "target_companies": ["Amazon"],
     "fact_type": "revenue",
-    "ground_truth": "",
+    "ground_truth": "716,924",
     "expected_answerable": true,
     "notes": "Single stated financial fact from Amazon's 2025 10-K."
   },
@@ -45,7 +45,7 @@
     "query": "What was JPMorgan Chase's net income for 2025?",
     "target_companies": ["JPMorgan Chase"],
     "fact_type": "net_income",
-    "ground_truth": "",
+    "ground_truth": "57,048",
     "expected_answerable": true,
     "notes": "Single stated financial fact from JPMorgan Chase's 2025 10-K."
   },
@@ -55,7 +55,7 @@
     "query": "How many employees did Microsoft report at the end of fiscal year 2026?",
     "target_companies": ["Microsoft"],
     "fact_type": "employee_count",
-    "ground_truth": "",
+    "ground_truth": "223,000",
     "expected_answerable": true,
     "notes": "Single stated workforce figure from Microsoft's 2026 10-K."
   },
@@ -65,7 +65,7 @@
     "query": "What business segments did NVIDIA report in its fiscal year 2026 10-K?",
     "target_companies": ["NVIDIA"],
     "fact_type": "segment",
-    "ground_truth": "",
+    "ground_truth": "Compute & Networking, Graphics",
     "expected_answerable": true,
     "notes": "Named business/operating segment information stated in NVIDIA's 2026 10-K."
   },
@@ -75,7 +75,7 @@
     "query": "What was Walmart's total number of associates at the end of fiscal year 2026?",
     "target_companies": ["Walmart"],
     "fact_type": "employee_count",
-    "ground_truth": "",
+    "ground_truth": "2.1 million",
     "expected_answerable": true,
     "notes": "Single stated workforce figure from Walmart's 2026 10-K."
   },
@@ -85,7 +85,7 @@
     "query": "What are the three major reportable segments Amazon identifies in its 2025 10-K?",
     "target_companies": ["Amazon"],
     "fact_type": "segment",
-    "ground_truth": "",
+    "ground_truth": "North America, International, AWS",
     "expected_answerable": true,
     "notes": "Named segment information stated in Amazon's 2025 10-K."
   },
@@ -95,7 +95,7 @@
     "query": "What was JPMorgan Chase's total assets as of December 31, 2025?",
     "target_companies": ["JPMorgan Chase"],
     "fact_type": "total_assets",
-    "ground_truth": "",
+    "ground_truth": "2,142,534",
     "expected_answerable": true,
     "notes": "Single balance-sheet figure stated in JPMorgan Chase's 2025 10-K."
   }
