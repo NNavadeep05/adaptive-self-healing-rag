@@ -10,3 +10,6 @@ Navadeep_Nandedapu_Resume.pdf
 
 # Local Qdrant storage
 qdrant_data/
+
+# Local evaluation corpus
+data/
