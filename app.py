@@ -60,7 +60,7 @@ if uploaded_file is not None:
                         "text": chunks,
                         "query": query,
                         "retrieval_mode": "original",
-                        "retrieval_budget": 2,
+                        "retrieval_budget": 5,
                         "retrieved_docs": [],
                         "answer": "",
                         "score": 0.0,
