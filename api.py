@@ -147,7 +147,7 @@ def query_documents(request: QueryRequest):
             "text": [],
             "query": request.question,
             "retrieval_mode": "original",
-            "retrieval_budget": 2,
+            "retrieval_budget": 5,
             "retrieved_docs": [],
             "answer": "",
             "score": 0.0,
