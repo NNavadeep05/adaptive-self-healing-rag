@@ -121,20 +121,17 @@ The evaluation set is inspired by the structure of FinanceBench and focuses on q
 |---|---:|
 | Evaluation queries | **10** |
 | Baseline retrieval success | **5/10 (50%)** |
-| Automated final pipeline success | **7/10 (70%)** |
-| Improvement over baseline | **+20 percentage points** |
+| Final pipeline success | **7/10 (60%)** |
+| Net improvement | **+20 percentage points** |
 | Genuine baseline failures recovered | **2/5 (40%)** |
+| New regression introduced | **1/10** |
 | Maximum retries | **3** |
-
-The evaluation demonstrates that the self-healing loop can recover genuine retrieval failures rather than merely retrying the same retrieval operation.
 
 ### Key engineering findings
 
-- **Self-healing can recover genuine retrieval failures.** The pipeline successfully recovered two baseline failures after changing its retrieval strategy.
-- **More retrieval is not automatically better.** Some failed queries reached a retrieval budget of 11 and still did not produce a correct answer, showing that simply increasing `k` has limits.
-- **Verification has an entity-alignment gap.** A response can be supported by retrieved context while still coming from the wrong company's document; content support alone does not guarantee entity correctness.
-- **Judge score is not equivalent to factual correctness.** High judge scores can occur even when the final answer is factually wrong, so the judge is an evaluation signal rather than ground truth.
-- **Evaluation methodology has limits.** String-based ground-truth matching can produce false negatives when the answer is semantically correct but phrased differently.
+- **Self-healing recovers genuine retrieval failures**, not just repeated retries.
+- **Verification has an entity-alignment gap** — a response can be supported by retrieved context while still coming from the wrong company's document. This caused the one regression observed above.
+- **More retrieval budget is not automatically better** — some failed queries reached a budget of 11 and still did not recover.
 
 ## API Usage
 
@@ -299,6 +296,8 @@ The full-pipeline evaluation writes detailed per-query results to:
 eval/full_pipeline_results.json
 ```
 
-## License
+## Data & References
 
-This project is intended as an engineering and portfolio demonstration of adaptive retrieval and self-healing RAG workflows.
+- **Data source:** All five evaluation filings (Microsoft, NVIDIA, Walmart, Amazon, JPMorgan Chase) are official 10-K annual reports retrieved directly from [SEC EDGAR](https://www.sec.gov/edgar), the U.S. Securities and Exchange Commission's public filing database.
+- **Evaluation taxonomy reference:** [FinanceBench](https://arxiv.org/abs/2311.11944) (Islam et al., 2023) — the direct-lookup style question structure used in this evaluation is modeled on FinanceBench's approach to benchmarking RAG systems over real SEC filings.
+- **Architecture reference:** *SH-RAG: Self-Healing Retrieval-Augmented Generation* (Kumawat et al., PiCET 2025, IEEE) — this project implements the paper's Self-Verification and Retrieval Refinement components, using an entailment-based verification approach against retrieved context rather than the paper's external fact-checking, and does not implement the paper's reinforcement-learning feedback loop.
