@@ -1,0 +1,1400 @@
+[
+  {
+    "run": 1,
+    "id": "Q01",
+    "query": "What was Microsoft's total revenue for fiscal year 2026?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": true,
+        "answer": "Microsoft’s total revenue for fiscal year 2026 was **$331.839 billion** (reported as $331,839 million).",
+        "llm_calls": 1,
+        "seconds": 3.99,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": true,
+        "answer": "Microsoft reported total revenue of **$331.839 billion** for fiscal year 2026. 【Document 3†L31-L38】【Document 10†L1-L4】",
+        "llm_calls": 1,
+        "seconds": 1.43,
+        "error": null
+      },
+      "self_healing": {
+        "correct": true,
+        "answer": "Microsoft’s total revenue for fiscal year 2026 was **$331,839 million**, i.e., about **$331.8 billion**【Document 3】.",
+        "llm_calls": 3,
+        "seconds": 5.07,
+        "error": null,
+        "retry_count": 0,
+        "final_retrieval_budget": 5,
+        "judge_score": 0.95,
+        "verification_status": "supported",
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": []
+      },
+      "hybrid_single_pass": {
+        "correct": true,
+        "answer": "Microsoft reported total revenue of **$331,839 million** for fiscal year 2026【Document 1】.",
+        "llm_calls": 1,
+        "seconds": 14.03,
+        "error": null
+      },
+      "self_healing_v2": {
+        "correct": true,
+        "answer": "Microsoft reported total revenue of **$331,839 million** for fiscal year 2026. 【Document 1†L9-L12】【Document 2†L9-L13】",
+        "llm_calls": 3,
+        "seconds": 11.48,
+        "error": null,
+        "retry_count": 0,
+        "judge_score": 0.95,
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": []
+      }
+    }
+  },
+  {
+    "run": 1,
+    "id": "Q02",
+    "query": "What was NVIDIA's total revenue for fiscal year 2026?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": true,
+        "answer": "NVIDIA reported total revenue of **$215,938 million** for fiscal year 2026 (the year ended January 25, 2026). This figure is shown in the Consolidated Statements of Income.",
+        "llm_calls": 1,
+        "seconds": 1.21,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": true,
+        "answer": "NVIDIA reported **total revenue of $215,938 million** for fiscal year 2026 (the year ended January 25, 2026)【Document 2】. This equals approximately **$215.9 billion**.",
+        "llm_calls": 1,
+        "seconds": 1.3,
+        "error": null
+      },
+      "self_healing": {
+        "correct": true,
+        "answer": "NVIDIA reported total revenue of **$215,938 million** for fiscal year 2026 (i.e., about **$215.9 billion**).【Document 4】",
+        "llm_calls": 3,
+        "seconds": 4.16,
+        "error": null,
+        "retry_count": 0,
+        "final_retrieval_budget": 5,
+        "judge_score": 0.95,
+        "verification_status": "supported",
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": []
+      },
+      "hybrid_single_pass": {
+        "correct": true,
+        "answer": "NVIDIA reported total revenue of **$215,938 million** for fiscal year 2026【Document 6†L9-L13】.",
+        "llm_calls": 1,
+        "seconds": 8.38,
+        "error": null
+      },
+      "self_healing_v2": {
+        "correct": true,
+        "answer": "NVIDIA reported total revenue of **$215,938 million** for fiscal year 2026【Document 4†L1-L4】【Document 6†L1-L4】.",
+        "llm_calls": 3,
+        "seconds": 11.42,
+        "error": null,
+        "retry_count": 0,
+        "judge_score": 0.95,
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": []
+      }
+    }
+  },
+  {
+    "run": 1,
+    "id": "Q03",
+    "query": "What was Walmart's total revenue for fiscal year 2026?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": true,
+        "answer": "Walmart’s total revenue for fiscal year 2026 was **$713,163 million** (≈ $713.2 billion)【Document 5】.",
+        "llm_calls": 1,
+        "seconds": 3.49,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": true,
+        "answer": "Walmart reported **total revenue of approximately $713.2 billion for fiscal year 2026** (shown as $713,163 million in the consolidated statements of income).【Document 3】【Document 5】",
+        "llm_calls": 1,
+        "seconds": 15.69,
+        "error": null
+      },
+      "self_healing": {
+        "correct": true,
+        "answer": "Walmart reported **total revenues of $713,163 million** for fiscal year 2026 (the sum of net sales and membership/other income)【Document 5】.",
+        "llm_calls": 3,
+        "seconds": 16.67,
+        "error": null,
+        "retry_count": 0,
+        "final_retrieval_budget": 5,
+        "judge_score": 0.95,
+        "verification_status": "supported",
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": []
+      },
+      "hybrid_single_pass": {
+        "correct": true,
+        "answer": "Walmart reported **total revenues of $713.2 billion** for fiscal year 2026【Document 2】.",
+        "llm_calls": 1,
+        "seconds": 10.17,
+        "error": null
+      },
+      "self_healing_v2": {
+        "correct": true,
+        "answer": "Walmart reported **total revenue of $713.2 billion** for fiscal year 2026.【Document 2】",
+        "llm_calls": 3,
+        "seconds": 23.06,
+        "error": null,
+        "retry_count": 0,
+        "judge_score": 0.95,
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": []
+      }
+    }
+  },
+  {
+    "run": 1,
+    "id": "Q04",
+    "query": "What was Amazon's total net sales for fiscal year 2025?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": true,
+        "answer": "Amazon’s total net sales for fiscal year 2025 were **$716.9 billion** (reported as $716,924 million)【Document 2†L1-L4】【Document 3†L9-L12】.",
+        "llm_calls": 1,
+        "seconds": 1.32,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": true,
+        "answer": "Amazon’s total net sales for fiscal year 2025 were **$716,924 million** (approximately **$716.9 billion**)【Document 1†L1-L4】【Document 3†L15-L22】【Document 4†L9-L12】.",
+        "llm_calls": 1,
+        "seconds": 14.57,
+        "error": null
+      },
+      "self_healing": {
+        "correct": true,
+        "answer": "Amazon’s total net sales for fiscal year 2025 were **$716,924 million** (approximately $716.9 billion). 【Document 2】 【Document 3】",
+        "llm_calls": 3,
+        "seconds": 12.11,
+        "error": null,
+        "retry_count": 0,
+        "final_retrieval_budget": 5,
+        "judge_score": 0.95,
+        "verification_status": "supported",
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": []
+      },
+      "hybrid_single_pass": {
+        "correct": true,
+        "answer": "Amazon reported total net sales of **$716,924 million** for fiscal year 2025【Document 1†L9-L12】.",
+        "llm_calls": 1,
+        "seconds": 9.0,
+        "error": null
+      },
+      "self_healing_v2": {
+        "correct": true,
+        "answer": "Amazon reported total net sales of **$716,924 million** for fiscal year 2025【Document 3†L31-L34】.",
+        "llm_calls": 3,
+        "seconds": 27.27,
+        "error": null,
+        "retry_count": 0,
+        "judge_score": 0.95,
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": []
+      }
+    }
+  },
+  {
+    "run": 1,
+    "id": "Q05",
+    "query": "What was JPMorgan Chase's net income for 2025?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": false,
+        "answer": "I didn't find any relevant documents.",
+        "llm_calls": 1,
+        "seconds": 4.57,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": false,
+        "answer": "JPMorgan Chase reported a **net income of $52,528 million for 2025**. This figure is derived by adding the net‑income amounts reported for each of the firm’s three primary segments in its 2025 Form 10‑K:\n\n- Consumer & Community Banking: **$18,245 million**【Document 2†L31-L33】  \n- Commercial & Investment Bank: **$27,761 million**【Document 2†L31-L33】  \n- Asset & Wealth Management: **$6,522 million**【Document 2†L31-L33】\n\nSumming these segment totals gives **$18,245 + $27,761 + $6,522 = $52,528 million**.",
+        "llm_calls": 1,
+        "seconds": 13.98,
+        "error": null
+      },
+      "self_healing": {
+        "correct": false,
+        "answer": "JPMorgan Chase reported net income of **$52,528 million for 2025** (the sum of net income from its three primary segments: Consumer & Community Banking $18,245 million, Commercial & Investment Bank $27,761 million, and Asset & Wealth Management $6,522 million).",
+        "llm_calls": 6,
+        "seconds": 27.34,
+        "error": null,
+        "retry_count": 1,
+        "final_retrieval_budget": 8,
+        "judge_score": 0.97,
+        "verification_status": "supported",
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": true,
+        "healing_trace": [
+          "Missing context → increased retrieval budget by 3 + enabled reranking"
+        ]
+      },
+      "hybrid_single_pass": {
+        "correct": true,
+        "answer": "JPMorgan Chase reported **net income of $57,048 million** for the year ended December 31, 2025【Document 2】.",
+        "llm_calls": 1,
+        "seconds": 8.04,
+        "error": null
+      },
+      "self_healing_v2": {
+        "correct": true,
+        "answer": "JPMorgan Chase reported net income of **$57,048 million** for 2025【Document 2】.",
+        "llm_calls": 3,
+        "seconds": 26.64,
+        "error": null,
+        "retry_count": 0,
+        "judge_score": 0.95,
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": []
+      }
+    }
+  },
+  {
+    "run": 1,
+    "id": "Q06",
+    "query": "How many employees did Microsoft report at the end of fiscal year 2026?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": false,
+        "answer": "I didn't find any relevant documents.",
+        "llm_calls": 1,
+        "seconds": 5.27,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": false,
+        "answer": "I didn't find any relevant documents.",
+        "llm_calls": 1,
+        "seconds": 15.44,
+        "error": null
+      },
+      "self_healing": {
+        "correct": false,
+        "answer": "I didn't find any relevant documents.",
+        "llm_calls": 12,
+        "seconds": 92.67,
+        "error": null,
+        "retry_count": 3,
+        "final_retrieval_budget": 11,
+        "judge_score": 0.05,
+        "verification_status": "supported",
+        "failure_reason": "irrelevant_docs",
+        "judge_passed": false,
+        "silent_failure": false,
+        "healing_trace": [
+          "Irrelevant docs → increased retrieval budget by 2 + enabled reranking",
+          "Irrelevant docs → increased retrieval budget by 2 + enabled reranking",
+          "Irrelevant docs → increased retrieval budget by 2 + enabled reranking"
+        ]
+      },
+      "hybrid_single_pass": {
+        "correct": true,
+        "answer": "Microsoft reported that **as of June 30, 2026, it employed approximately 223,000 people on a full‑time basis**【Document 2】.",
+        "llm_calls": 1,
+        "seconds": 5.6,
+        "error": null
+      },
+      "self_healing_v2": {
+        "correct": true,
+        "answer": "Microsoft reported that **as of June 30 2026 (the end of its fiscal year), it employed approximately 223,000 people on a full‑time basis**【Document 2】.",
+        "llm_calls": 3,
+        "seconds": 15.15,
+        "error": null,
+        "retry_count": 0,
+        "judge_score": 0.95,
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": []
+      }
+    }
+  },
+  {
+    "run": 1,
+    "id": "Q07",
+    "query": "What business segments did NVIDIA report in its fiscal year 2026 10-K?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": false,
+        "answer": "I didn't find any relevant documents.",
+        "llm_calls": 1,
+        "seconds": 1.32,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": true,
+        "answer": "NVIDIA reported that it operates **two business (operating) segments** in its fiscal 2026 Form 10‑K:\n\n- **Compute & Networking**  \n- **Graphics**  \n\nThese two segments are identified in the 10‑K’s segment discussion (see Document 1).",
+        "llm_calls": 1,
+        "seconds": 1.22,
+        "error": null
+      },
+      "self_healing": {
+        "correct": true,
+        "answer": "NVIDIA reported two operating segments in its fiscal‑year 2026 Form 10‑K:\n\n- **Compute & Networking**  \n- **Graphics**  \n\nThese two segments are identified in the filing’s discussion of operating segments【Document 1】.",
+        "llm_calls": 6,
+        "seconds": 57.45,
+        "error": null,
+        "retry_count": 1,
+        "final_retrieval_budget": 8,
+        "judge_score": 0.95,
+        "verification_status": "supported",
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": [
+          "Missing context → increased retrieval budget by 3 + enabled reranking"
+        ]
+      },
+      "hybrid_single_pass": {
+        "correct": true,
+        "answer": "NVIDIA’s FY 2026 Form 10‑K states that it reports its results in **two operating segments**:\n\n1. **Compute & Networking** – includes the Data Center accelerated‑computing and networking platforms, AI solutions and software, as well as Automotive platforms and autonomous/electric‑vehicle solutions.  \n2. **Graphics** – includes GeForce GPUs for gaming/PCs and Quadro/NVIDIA RTX GPUs for enterprise workstation graphics.  \n\nThese segment names are identified in the filing’s Business section【Document 1†L1-L4】【Document 2†L1-L4】.",
+        "llm_calls": 1,
+        "seconds": 7.05,
+        "error": null
+      },
+      "self_healing_v2": {
+        "correct": true,
+        "answer": "NVIDIA reported two operating segments in its fiscal‑year 2026 Form 10‑K:\n\n* **Compute & Networking** – covering Data‑Center accelerated computing and networking platforms, AI solutions and software, and Automotive platforms and autonomous/electric‑vehicle solutions.  \n* **Graphics** – covering GeForce GPUs for gaming and PCs, and Quadro/NVIDIA RTX GPUs for enterprise workstation graphics.  \n\nThese segments are described in the filing’s Business section (e.g., “Our two operating segments are ‘Compute & Networking’ and ‘Graphics’”【Document 1】 and “We report our business results in two segments… The Compute & Networking segment includes… The Graphics segment includes…”【Document 2】).",
+        "llm_calls": 3,
+        "seconds": 26.2,
+        "error": null,
+        "retry_count": 0,
+        "judge_score": 0.95,
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": []
+      }
+    }
+  },
+  {
+    "run": 1,
+    "id": "Q08",
+    "query": "What was Walmart's total number of associates at the end of fiscal year 2026?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": false,
+        "answer": "I didn't find any relevant documents.",
+        "llm_calls": 1,
+        "seconds": 1.1,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": true,
+        "answer": "Walmart reports that it employs **approximately 2.1 million associates worldwide**—about 1.6 million in the United States and roughly 0.5 million internationally. This figure is given in the Human Capital Management section of the filing and reflects the company’s total associate base around the time of the FY 2026 reporting period.",
+        "llm_calls": 1,
+        "seconds": 1.73,
+        "error": null
+      },
+      "self_healing": {
+        "correct": true,
+        "answer": "Walmart reported that it employs **approximately 2.1 million associates worldwide** (about 1.6 million in the U.S. and 0.5 million internationally) 【Document 3】.",
+        "llm_calls": 12,
+        "seconds": 137.7,
+        "error": null,
+        "retry_count": 3,
+        "final_retrieval_budget": 11,
+        "judge_score": 0.9,
+        "verification_status": "supported",
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": [
+          "Irrelevant docs → increased retrieval budget by 2 + enabled reranking",
+          "Irrelevant docs → increased retrieval budget by 2 + enabled reranking",
+          "Unsupported claims → enabled reranking + increased retrieval budget by 2"
+        ]
+      },
+      "hybrid_single_pass": {
+        "correct": true,
+        "answer": "Walmart reported that it has **approximately 2.1 million associates around the world** (about 1.6 million in the U.S. and about 0.5 million internationally) 【Document 1】. This figure reflects the total number of associates for fiscal year 2026.",
+        "llm_calls": 1,
+        "seconds": 8.36,
+        "error": null
+      },
+      "self_healing_v2": {
+        "correct": null,
+        "answer": null,
+        "llm_calls": null,
+        "seconds": 9.67,
+        "error": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-20b` in organization `org_[redacted]` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 198097, Requested 2623. Please try again in 5m11.039999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+      }
+    }
+  },
+  {
+    "run": 1,
+    "id": "Q09",
+    "query": "What are the three major reportable segments Amazon identifies in its 2025 10-K?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": true,
+        "answer": "Amazon identifies three major reportable segments in its 2025 Form 10‑K:\n\n1. **North America**  \n2. **International**  \n3. **Amazon Web Services (AWS)**  \n\nThese segments are referenced in the filing as the way the company evaluates its business performance and manages its operations【Document 1†L1-L4】【Document 5†L4-L7】.",
+        "llm_calls": 1,
+        "seconds": 1.04,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": false,
+        "answer": "Amazon’s 2025 Form 10‑K lists its three reportable segments as:\n\n1. **Productivity and Business Processes**  \n2. **Intelligent Cloud**  \n3. **More Personal Computing**  \n\n(See Document 4, “Reportable Segments.”)",
+        "llm_calls": 1,
+        "seconds": 1.63,
+        "error": null
+      },
+      "self_healing": {
+        "correct": true,
+        "answer": "Amazon’s 2025 Form 10‑K states that it organizes its operations into three reportable segments:\n\n- **North America**  \n- **International**  \n- **Amazon Web Services (AWS)**  \n\nThese three segments are referenced in the filing’s segment discussion (see Document 1 and Document 5).",
+        "llm_calls": 3,
+        "seconds": 17.59,
+        "error": null,
+        "retry_count": 0,
+        "final_retrieval_budget": 5,
+        "judge_score": 0.95,
+        "verification_status": "supported",
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": []
+      },
+      "hybrid_single_pass": {
+        "correct": true,
+        "answer": "Amazon’s 2025 Form 10‑K states that it organizes its operations into three reportable segments:\n\n- **North America**  \n- **International**  \n- **Amazon Web Services (AWS)**  \n\nThese three segments are repeatedly identified in the filing (e.g., “We have organized our operations into three segments: North America, International, and AWS”【Document 1†L1-L4】, 【Document 2†L1-L4】, 【Document 3†L1-L4】).",
+        "llm_calls": 1,
+        "seconds": 6.49,
+        "error": null
+      }
+    }
+  },
+  {
+    "run": 1,
+    "id": "Q10",
+    "query": "What was JPMorgan Chase's total assets as of December 31, 2025?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": false,
+        "answer": "I didn't find any relevant documents.",
+        "llm_calls": 1,
+        "seconds": 0.95,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": false,
+        "answer": "JPMorgan Chase’s total assets at year‑end December 31, 2025 were **$2,142,534 million**.【Document 1】",
+        "llm_calls": 1,
+        "seconds": 1.2,
+        "error": null
+      },
+      "self_healing": {
+        "correct": false,
+        "answer": "JPMorgan Chase’s total assets at year‑end December 31 2025 were **$2,142,534 million**【Document 1】.",
+        "llm_calls": 9,
+        "seconds": 85.48,
+        "error": null,
+        "retry_count": 2,
+        "final_retrieval_budget": 9,
+        "judge_score": 0.95,
+        "verification_status": "supported",
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": true,
+        "healing_trace": [
+          "Irrelevant docs → increased retrieval budget by 2 + enabled reranking",
+          "Irrelevant docs → increased retrieval budget by 2 + enabled reranking"
+        ]
+      },
+      "hybrid_single_pass": {
+        "correct": true,
+        "answer": "JPMorgan Chase reported **total assets of $4,424,900 million** as of December 31, 2025【Document 1†L31-L33】.",
+        "llm_calls": 1,
+        "seconds": 7.54,
+        "error": null
+      }
+    }
+  },
+  {
+    "run": 1,
+    "id": "Q21",
+    "query": "What was Amazon's net income for 2025?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": true,
+        "answer": "Amazon’s net income for the year ended December 31, 2025 was **$77,670 million**【Document 2】.",
+        "llm_calls": 1,
+        "seconds": 2.1,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": true,
+        "answer": "Amazon’s net income for 2025 was **$77,670 million** (approximately $77.7 billion)【Document 2】.",
+        "llm_calls": 1,
+        "seconds": 9.78,
+        "error": null
+      },
+      "hybrid_single_pass": {
+        "correct": true,
+        "answer": "Amazon reported net income of **$77,670 million** for the year ended December 31, 2025【Document 2†L1-L4】.",
+        "llm_calls": 1,
+        "seconds": 17.76,
+        "error": null
+      },
+      "self_healing_v2": {
+        "correct": null,
+        "answer": null,
+        "llm_calls": null,
+        "seconds": 13.75,
+        "error": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_[redacted]` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199529, Requested 2375. Please try again in 13m42.528s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+      },
+      "self_healing": {
+        "correct": null,
+        "answer": null,
+        "llm_calls": null,
+        "seconds": 0.95,
+        "error": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_[redacted]` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199527, Requested 1221. Please try again in 5m23.135999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+      }
+    }
+  },
+  {
+    "run": 1,
+    "id": "Q22",
+    "query": "What were Amazon's total assets as of December 31, 2025?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": false,
+        "answer": "I didn't find any relevant documents.",
+        "llm_calls": 1,
+        "seconds": 8.11,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": false,
+        "answer": "I didn't find any relevant documents.",
+        "llm_calls": 1,
+        "seconds": 16.14,
+        "error": null
+      },
+      "hybrid_single_pass": {
+        "correct": true,
+        "answer": "Amazon’s total assets at year‑end 2025 were **$818,042 million**【Document 1】.",
+        "llm_calls": 1,
+        "seconds": 17.79,
+        "error": null
+      }
+    }
+  },
+  {
+    "run": 1,
+    "id": "Q23",
+    "query": "What was Amazon's diluted earnings per share for 2025?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": true,
+        "answer": "Amazon’s diluted earnings per share for 2025 was **$7.17**.",
+        "llm_calls": 1,
+        "seconds": 8.12,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": true,
+        "answer": "Amazon’s diluted earnings per share (EPS) for 2025 was **$7.17** per share【Document 1】.",
+        "llm_calls": 1,
+        "seconds": 17.85,
+        "error": null
+      },
+      "hybrid_single_pass": {
+        "correct": true,
+        "answer": "Amazon’s diluted earnings per share for 2025 was **$7.17 per share**【Document 1】.",
+        "llm_calls": 1,
+        "seconds": 15.33,
+        "error": null
+      }
+    }
+  },
+  {
+    "run": 1,
+    "id": "Q24",
+    "query": "How much cash and cash equivalents did Amazon report as of December 31, 2025?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": false,
+        "answer": "Amazon reported **$90,106 million** in cash, cash equivalents, and restricted cash as of December 31 2025 (i.e., about $90.1 billion).【Document 1】",
+        "llm_calls": 1,
+        "seconds": 10.41,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": null,
+        "answer": null,
+        "llm_calls": 1,
+        "seconds": 2.62,
+        "error": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_[redacted]` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199641, Requested 2484. Please try again in 15m18s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+      },
+      "hybrid_single_pass": {
+        "correct": null,
+        "answer": null,
+        "llm_calls": 1,
+        "seconds": 6.2,
+        "error": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_[redacted]` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199627, Requested 2226. Please try again in 13m20.496s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+      }
+    }
+  },
+  {
+    "run": 1,
+    "id": "Q25",
+    "query": "What was JPMorgan Chase's reported total net revenue for 2025?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": null,
+        "answer": null,
+        "llm_calls": 1,
+        "seconds": 0.49,
+        "error": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_[redacted]` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199626, Requested 1223. Please try again in 6m6.768s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+      }
+    }
+  },
+  {
+    "run": 2,
+    "id": "Q01",
+    "query": "What was Microsoft's total revenue for fiscal year 2026?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": true,
+        "answer": "Microsoft’s total revenue for fiscal year 2026 was **$331.839 billion** (reported as $331,839 million in the financial summary).【Document 3†L1-L4】【Document 5†L1-L4】",
+        "llm_calls": 1,
+        "seconds": 1.09,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": true,
+        "answer": "Microsoft reported total revenue of **$331.839 billion** for fiscal year 2026【Document 3†L30-L34】【Document 10†L1-L4】.",
+        "llm_calls": 1,
+        "seconds": 1.45,
+        "error": null
+      },
+      "self_healing": {
+        "correct": true,
+        "answer": "Microsoft’s total revenue for fiscal year 2026 was **$331.839 billion** (reported as $331,839 million).【Document 3】【Document 5】",
+        "llm_calls": 3,
+        "seconds": 15.54,
+        "error": null,
+        "retry_count": 0,
+        "final_retrieval_budget": 5,
+        "judge_score": 0.95,
+        "verification_status": "supported",
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": []
+      }
+    }
+  },
+  {
+    "run": 2,
+    "id": "Q02",
+    "query": "What was NVIDIA's total revenue for fiscal year 2026?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": true,
+        "answer": "NVIDIA reported total revenue of **$215,938 million** (approximately **$215.9 billion**) for fiscal year 2026. This figure is shown in the Consolidated Statements of Income for the year ended January 25, 2026.",
+        "llm_calls": 1,
+        "seconds": 1.31,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": true,
+        "answer": "NVIDIA reported **$215,938 million in revenue for fiscal year 2026**, which is equivalent to **approximately $215.9 billion**【Document 2†L9-L12】.",
+        "llm_calls": 1,
+        "seconds": 1.33,
+        "error": null
+      },
+      "self_healing": {
+        "correct": true,
+        "answer": "NVIDIA reported total revenue of **$215,938 million** for fiscal year 2026 (the year ended January 25, 2026).【Document 4】",
+        "llm_calls": 3,
+        "seconds": 24.1,
+        "error": null,
+        "retry_count": 0,
+        "final_retrieval_budget": 5,
+        "judge_score": 1.0,
+        "verification_status": "supported",
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": []
+      }
+    }
+  },
+  {
+    "run": 2,
+    "id": "Q03",
+    "query": "What was Walmart's total revenue for fiscal year 2026?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": true,
+        "answer": "Walmart’s total revenue for fiscal year 2026 was **$713,163 million** (as shown in Document 5, Consolidated Statements of Income).",
+        "llm_calls": 1,
+        "seconds": 1.24,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": true,
+        "answer": "Walmart reported **total revenue of approximately $713 billion** for fiscal year 2026 (specifically, $713.2 billion, or $713,163 million)【Document 3】.",
+        "llm_calls": 1,
+        "seconds": 1.2,
+        "error": null
+      },
+      "self_healing": {
+        "correct": true,
+        "answer": "Walmart’s consolidated total revenue for fiscal year 2026 was **$713,163 million**【Document 5】.",
+        "llm_calls": 3,
+        "seconds": 20.72,
+        "error": null,
+        "retry_count": 0,
+        "final_retrieval_budget": 5,
+        "judge_score": 0.95,
+        "verification_status": "supported",
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": []
+      }
+    }
+  },
+  {
+    "run": 2,
+    "id": "Q04",
+    "query": "What was Amazon's total net sales for fiscal year 2025?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": true,
+        "answer": "Amazon’s total net sales for fiscal year 2025 were **$716,924 million** (approximately **$716.9 billion**)【Document 2】【Document 3】.",
+        "llm_calls": 1,
+        "seconds": 1.41,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": true,
+        "answer": "Amazon’s total net sales for fiscal year 2025 were **$716,924 million** (about $717 billion)【Document 1†L9-L12】【Document 3†L13-L18】.",
+        "llm_calls": 1,
+        "seconds": 1.1,
+        "error": null
+      },
+      "self_healing": {
+        "correct": true,
+        "answer": "Amazon’s total net sales for fiscal year 2025 were **$716,924 million** (approximately $716.9 billion).【Document 2】【Document 3】",
+        "llm_calls": 3,
+        "seconds": 19.68,
+        "error": null,
+        "retry_count": 0,
+        "final_retrieval_budget": 5,
+        "judge_score": 0.95,
+        "verification_status": "supported",
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": []
+      }
+    }
+  },
+  {
+    "run": 2,
+    "id": "Q05",
+    "query": "What was JPMorgan Chase's net income for 2025?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": false,
+        "answer": "I didn't find any relevant documents.",
+        "llm_calls": 1,
+        "seconds": 1.21,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": false,
+        "answer": "JPMorgan Chase reported a **net income of $52,528 million** for the year ended December 31 2025. (This figure is the sum of the net‑income amounts shown for the three reporting segments in the 2025 Form 10‑K: Consumer & Community Banking $18,245 million, Commercial & Investment Bank $27,761 million, and Asset & Wealth Management $6,522 million.)",
+        "llm_calls": 1,
+        "seconds": 10.89,
+        "error": null
+      },
+      "self_healing": {
+        "correct": false,
+        "answer": "JPMorgan Chase reported a total net income of **$52,528 million** for the year ended December 31 2025.\n\n* Consumer & Community Banking net income: **$18,245 million**【Document 2†L21-L23】  \n* Commercial & Investment Bank net income: **$27,761 million**【Document 2†L24-L26】  \n* Asset & Wealth Management net income: **$6,522 million**【Document 2†L27-L29】\n\nAdding the three segment results gives: $18,245 + $27,761 + $6,522 = **$52,528 million**.",
+        "llm_calls": 6,
+        "seconds": 42.79,
+        "error": null,
+        "retry_count": 1,
+        "final_retrieval_budget": 7,
+        "judge_score": 0.95,
+        "verification_status": "supported",
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": true,
+        "healing_trace": [
+          "Irrelevant docs → increased retrieval budget by 2 + enabled reranking"
+        ]
+      }
+    }
+  },
+  {
+    "run": 2,
+    "id": "Q06",
+    "query": "How many employees did Microsoft report at the end of fiscal year 2026?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": false,
+        "answer": "I didn't find any relevant documents.",
+        "llm_calls": 1,
+        "seconds": 1.21,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": false,
+        "answer": "I didn't find any relevant documents.",
+        "llm_calls": 1,
+        "seconds": 1.27,
+        "error": null
+      },
+      "self_healing": {
+        "correct": false,
+        "answer": "I didn't find any relevant documents.",
+        "llm_calls": 12,
+        "seconds": 127.13,
+        "error": null,
+        "retry_count": 3,
+        "final_retrieval_budget": 11,
+        "judge_score": 0.1,
+        "verification_status": "supported",
+        "failure_reason": "irrelevant_docs",
+        "judge_passed": false,
+        "silent_failure": false,
+        "healing_trace": [
+          "Irrelevant docs → increased retrieval budget by 2 + enabled reranking",
+          "Irrelevant docs → increased retrieval budget by 2 + enabled reranking",
+          "Irrelevant docs → increased retrieval budget by 2 + enabled reranking"
+        ]
+      }
+    }
+  },
+  {
+    "run": 2,
+    "id": "Q07",
+    "query": "What business segments did NVIDIA report in its fiscal year 2026 10-K?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": false,
+        "answer": "The documents that were provided only mention one of NVIDIA’s business segments for fiscal 2026:\n\n- **Compute & Networking segment** – referenced several times in the revenue discussion (Document 1).\n\nNo other segment names are listed in the excerpts you supplied.",
+        "llm_calls": 1,
+        "seconds": 2.01,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": true,
+        "answer": "NVIDIA’s fiscal 2026 Form 10‑K states that it reports **two operating segments**:\n\n* **Compute & Networking**  \n* **Graphics**\n\n(See Document 1, which notes “Our two operating segments are ‘Compute & Networking’ and ‘Graphics.’”)",
+        "llm_calls": 1,
+        "seconds": 1.31,
+        "error": null
+      },
+      "self_healing": {
+        "correct": true,
+        "answer": "NVIDIA reported two operating segments in its fiscal 2026 Form 10‑K:\n\n- **Compute & Networking**  \n- **Graphics**  \n\nThese two segments are identified in the filing’s description of its operating segments. 【Document 1】",
+        "llm_calls": 6,
+        "seconds": 54.77,
+        "error": null,
+        "retry_count": 1,
+        "final_retrieval_budget": 8,
+        "judge_score": 0.95,
+        "verification_status": "supported",
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": [
+          "Missing context → increased retrieval budget by 3 + enabled reranking"
+        ]
+      }
+    }
+  },
+  {
+    "run": 2,
+    "id": "Q08",
+    "query": "What was Walmart's total number of associates at the end of fiscal year 2026?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": false,
+        "answer": "I didn't find any relevant documents.",
+        "llm_calls": 1,
+        "seconds": 0.87,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": true,
+        "answer": "Walmart reports that it employs approximately 2.1 million associates worldwide (about 1.6 million in the United States and 0.5 million internationally)【Document 3】.",
+        "llm_calls": 1,
+        "seconds": 1.17,
+        "error": null
+      },
+      "self_healing": {
+        "correct": true,
+        "answer": "Walmart reported that it employs **approximately 2.1 million associates worldwide** (about 1.6 million in the United States and about 0.5 million internationally) at the time of its 2026 filing. This figure reflects the total number of associates for fiscal year 2026.",
+        "llm_calls": 9,
+        "seconds": 96.78,
+        "error": null,
+        "retry_count": 2,
+        "final_retrieval_budget": 9,
+        "judge_score": 0.95,
+        "verification_status": "supported",
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": [
+          "Irrelevant docs → increased retrieval budget by 2 + enabled reranking",
+          "Irrelevant docs → increased retrieval budget by 2 + enabled reranking"
+        ]
+      }
+    }
+  },
+  {
+    "run": 2,
+    "id": "Q09",
+    "query": "What are the three major reportable segments Amazon identifies in its 2025 10-K?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": true,
+        "answer": "Amazon’s 2025 Form 10‑K states that it organizes its operations into three reportable segments:\n\n1. **North America**  \n2. **International**  \n3. **Amazon Web Services (AWS)**  \n\nThese three segments are mentioned in the filing’s overview of its segment organization.",
+        "llm_calls": 1,
+        "seconds": 1.28,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": false,
+        "answer": "Amazon’s 2025 Form 10‑K reports its financial performance in three reportable segments:\n\n1. **Productivity and Business Processes**  \n2. **Intelligent Cloud**  \n3. **More Personal Computing**  \n\nThese three segments are identified in the “Reportable Segments” section of the filing.",
+        "llm_calls": 1,
+        "seconds": 1.41,
+        "error": null
+      },
+      "self_healing": {
+        "correct": true,
+        "answer": "Amazon’s 2025 Form 10‑K reports that it organizes its business into three reportable segments:\n\n1. **North America**  \n2. **International**  \n3. **Amazon Web Services (AWS)**",
+        "llm_calls": 3,
+        "seconds": 15.62,
+        "error": null,
+        "retry_count": 0,
+        "final_retrieval_budget": 5,
+        "judge_score": 0.98,
+        "verification_status": "supported",
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": []
+      }
+    }
+  },
+  {
+    "run": 2,
+    "id": "Q10",
+    "query": "What was JPMorgan Chase's total assets as of December 31, 2025?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": false,
+        "answer": "I didn't find any relevant documents.",
+        "llm_calls": 1,
+        "seconds": 1.07,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": false,
+        "answer": "JPMorgan Chase’s total assets at year‑end December 31 2025 were **$2,142,534 million**【Document 1】.",
+        "llm_calls": 1,
+        "seconds": 1.1,
+        "error": null
+      },
+      "self_healing": {
+        "correct": false,
+        "answer": "JPMorgan Chase’s total assets were **$2,142,534 million** as of December 31, 2025. (Document 1)",
+        "llm_calls": 9,
+        "seconds": 83.97,
+        "error": null,
+        "retry_count": 2,
+        "final_retrieval_budget": 9,
+        "judge_score": 0.95,
+        "verification_status": "supported",
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": true,
+        "healing_trace": [
+          "Irrelevant docs → increased retrieval budget by 2 + enabled reranking",
+          "Unsupported claims → enabled reranking + increased retrieval budget by 2"
+        ]
+      }
+    }
+  },
+  {
+    "run": 3,
+    "id": "Q01",
+    "query": "What was Microsoft's total revenue for fiscal year 2026?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": true,
+        "answer": "Microsoft’s total revenue for fiscal year 2026 was **$331.839 billion** (reported as $331,839 million).【Document 3】【Document 5】",
+        "llm_calls": 1,
+        "seconds": 1.15,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": true,
+        "answer": "Microsoft’s total revenue for fiscal year 2026 was **$331.839 billion** (reported as $331,839 million). 【Document 3】【Document 10】",
+        "llm_calls": 1,
+        "seconds": 1.83,
+        "error": null
+      },
+      "self_healing": {
+        "correct": true,
+        "answer": "Microsoft’s total revenue for fiscal year 2026 was **$331.839 billion** (reported as $331,839 million in the summary results of operations).",
+        "llm_calls": 3,
+        "seconds": 14.33,
+        "error": null,
+        "retry_count": 0,
+        "final_retrieval_budget": 5,
+        "judge_score": 0.95,
+        "verification_status": "supported",
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": []
+      }
+    }
+  },
+  {
+    "run": 3,
+    "id": "Q02",
+    "query": "What was NVIDIA's total revenue for fiscal year 2026?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": true,
+        "answer": "NVIDIA reported total revenue of **$215,938 million** (approximately $215.9 billion) for fiscal year 2026【Document 4】.",
+        "llm_calls": 1,
+        "seconds": 0.96,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": true,
+        "answer": "NVIDIA reported **$215,938 million** in revenue for the fiscal year ended January 25, 2026 (i.e., about **$215.9 billion**).【Document 2】",
+        "llm_calls": 1,
+        "seconds": 1.3,
+        "error": null
+      },
+      "self_healing": {
+        "correct": true,
+        "answer": "NVIDIA reported **$215,938 million** in revenue for fiscal year 2026 (the year ended January 25, 2026).",
+        "llm_calls": 3,
+        "seconds": 23.21,
+        "error": null,
+        "retry_count": 0,
+        "final_retrieval_budget": 5,
+        "judge_score": 0.95,
+        "verification_status": "supported",
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": []
+      }
+    }
+  },
+  {
+    "run": 3,
+    "id": "Q03",
+    "query": "What was Walmart's total revenue for fiscal year 2026?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": true,
+        "answer": "Walmart’s total revenue for fiscal 2026 was **$713,163 million** (approximately $713.2 billion)【Document 5】.",
+        "llm_calls": 1,
+        "seconds": 1.0,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": true,
+        "answer": "Walmart reported **total revenue of approximately $713.2 billion for fiscal year 2026**. This figure is shown in the company’s discussion of fiscal‑2026 results, which states that total revenues were $713.2 billion (primarily from net sales of $706.4 billion)【Document 3】. The consolidated statement of income also lists total revenues of $713,163 million for fiscal 2026, which corresponds to $713.2 billion【Document 5】.",
+        "llm_calls": 1,
+        "seconds": 1.46,
+        "error": null
+      },
+      "self_healing": {
+        "correct": true,
+        "answer": "Walmart’s consolidated total revenue for fiscal year 2026 was **$713,163 million** (approximately $713.2 billion)【Document 5】.",
+        "llm_calls": 3,
+        "seconds": 21.05,
+        "error": null,
+        "retry_count": 0,
+        "final_retrieval_budget": 5,
+        "judge_score": 0.95,
+        "verification_status": "supported",
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": []
+      }
+    }
+  },
+  {
+    "run": 3,
+    "id": "Q04",
+    "query": "What was Amazon's total net sales for fiscal year 2025?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": true,
+        "answer": "Amazon’s total net sales for fiscal year 2025 were **$716,924 million** (approximately $716.9 billion)【Document 2】【Document 3】.",
+        "llm_calls": 1,
+        "seconds": 1.27,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": true,
+        "answer": "Amazon’s total net sales for fiscal year 2025 were **$716,924 million** (approximately **$716.9 billion**)【Document 1】【Document 3】【Document 4】.",
+        "llm_calls": 1,
+        "seconds": 1.44,
+        "error": null
+      },
+      "self_healing": {
+        "correct": true,
+        "answer": "Amazon’s total net sales for the fiscal year ended December 31 2025 were **$716,924 million** (approximately $716.9 billion)【Document 2†L9-L13】【Document 3†L9-L13】.",
+        "llm_calls": 3,
+        "seconds": 18.51,
+        "error": null,
+        "retry_count": 0,
+        "final_retrieval_budget": 5,
+        "judge_score": 0.95,
+        "verification_status": "supported",
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": []
+      }
+    }
+  },
+  {
+    "run": 3,
+    "id": "Q05",
+    "query": "What was JPMorgan Chase's net income for 2025?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": false,
+        "answer": "I didn't find any relevant documents.",
+        "llm_calls": 1,
+        "seconds": 0.94,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": false,
+        "answer": "JPMorgan Chase reported a total net income of **$52,528 million** for 2025. This figure comes from adding the net‑income amounts shown for each of the firm’s three main segments in the 2025 Form 10‑K:\n\n- Consumer & Community Banking: $18,245 million  \n- Commercial & Investment Bank: $27,761 million  \n- Asset & Wealth Management: $6,522 million  \n\n(18,245 + 27,761 + 6,522 = $52,528 million)【Document 2】.",
+        "llm_calls": 1,
+        "seconds": 1.65,
+        "error": null
+      },
+      "self_healing": {
+        "correct": false,
+        "answer": "JPMorgan Chase reported the following net‑income figures for its three main operating segments in 2025:\n\n* Consumer & Community Banking – **$18,245 million**  \n* Commercial & Investment Bank – **$27,761 million**  \n* Asset & Wealth Management – **$6,522 million**  \n\nAdding the segment results gives a consolidated net income of **about $52,528 million** (≈ $52.5 billion) for the year 2025【Document 2】.",
+        "llm_calls": 6,
+        "seconds": 50.96,
+        "error": null,
+        "retry_count": 1,
+        "final_retrieval_budget": 7,
+        "judge_score": 0.9,
+        "verification_status": "supported",
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": true,
+        "healing_trace": [
+          "Unsupported claims → enabled reranking + increased retrieval budget by 2"
+        ]
+      }
+    }
+  },
+  {
+    "run": 3,
+    "id": "Q06",
+    "query": "How many employees did Microsoft report at the end of fiscal year 2026?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": false,
+        "answer": "I didn't find any relevant documents.",
+        "llm_calls": 1,
+        "seconds": 1.15,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": false,
+        "answer": "I didn't find any relevant documents.",
+        "llm_calls": 1,
+        "seconds": 1.25,
+        "error": null
+      },
+      "self_healing": {
+        "correct": false,
+        "answer": "I didn't find any relevant documents.",
+        "llm_calls": 12,
+        "seconds": 120.97,
+        "error": null,
+        "retry_count": 3,
+        "final_retrieval_budget": 11,
+        "judge_score": 0.1,
+        "verification_status": "supported",
+        "failure_reason": "irrelevant_docs",
+        "judge_passed": false,
+        "silent_failure": false,
+        "healing_trace": [
+          "Unsupported claims → enabled reranking + increased retrieval budget by 2",
+          "Irrelevant docs → increased retrieval budget by 2 + enabled reranking",
+          "Irrelevant docs → increased retrieval budget by 2 + enabled reranking"
+        ]
+      }
+    }
+  },
+  {
+    "run": 3,
+    "id": "Q07",
+    "query": "What business segments did NVIDIA report in its fiscal year 2026 10-K?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": false,
+        "answer": "NVIDIA’s fiscal‑2026 filing identifies a **Compute & Networking** segment – the revenue it discusses for its largest direct customers is “primarily attributable to the Compute & Networking segment”【Document 1†L1-L7】. \n\nNo other segment names are disclosed in the excerpts provided.",
+        "llm_calls": 1,
+        "seconds": 2.13,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": true,
+        "answer": "NVIDIA reported **two operating segments** in its fiscal‑year 2026 Form 10‑K:\n\n* **Compute & Networking**  \n* **Graphics**  \n\nThese segments are identified in the company’s 10‑K filing (see Document 1).",
+        "llm_calls": 1,
+        "seconds": 1.33,
+        "error": null
+      },
+      "self_healing": {
+        "correct": true,
+        "answer": "NVIDIA reported **two operating segments** in its fiscal‑year 2026 Form 10‑K:\n\n- **Compute & Networking**  \n- **Graphics**  \n\nThese are identified in the filing as “Our two operating segments are ‘Compute & Networking’ and ‘Graphics.’”【Document 1】",
+        "llm_calls": 6,
+        "seconds": 56.16,
+        "error": null,
+        "retry_count": 1,
+        "final_retrieval_budget": 8,
+        "judge_score": 0.95,
+        "verification_status": "supported",
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": [
+          "Missing context → increased retrieval budget by 3 + enabled reranking"
+        ]
+      }
+    }
+  },
+  {
+    "run": 3,
+    "id": "Q08",
+    "query": "What was Walmart's total number of associates at the end of fiscal year 2026?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": false,
+        "answer": "I didn't find any relevant documents.",
+        "llm_calls": 1,
+        "seconds": 0.97,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": true,
+        "answer": "Walmart reported that it employs **approximately 2.1 million associates worldwide** (about 1.6 million in the U.S. and 0.5 million internationally).【Document 3】",
+        "llm_calls": 1,
+        "seconds": 1.36,
+        "error": null
+      },
+      "self_healing": {
+        "correct": null,
+        "llm_calls": null,
+        "seconds": 2.63,
+        "error": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-20b` in organization `org_[redacted]` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 198866, Requested 2243. Please try again in 7m59.087999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+      }
+    }
+  },
+  {
+    "run": 3,
+    "id": "Q09",
+    "query": "What are the three major reportable segments Amazon identifies in its 2025 10-K?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": true,
+        "answer": "Amazon’s 2025 Form 10‑K identifies three reportable segments:\n\n1. **North America**  \n2. **International**  \n3. **Amazon Web Services (AWS)**",
+        "llm_calls": 1,
+        "seconds": 1.47,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": false,
+        "answer": "Amazon’s 2025 Form 10‑K lists three reportable segments:\n\n1. **Productivity and Business Processes**  \n2. **Intelligent Cloud**  \n3. **More Personal Computing**  \n\nThese three segments are identified in the “Reportable Segments” section of the filing (see Document 4).",
+        "llm_calls": 1,
+        "seconds": 1.35,
+        "error": null
+      },
+      "self_healing": {
+        "correct": null,
+        "llm_calls": null,
+        "seconds": 2.04,
+        "error": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-20b` in organization `org_[redacted]` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 198862, Requested 1793. Please try again in 4m42.96s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+      }
+    }
+  },
+  {
+    "run": 3,
+    "id": "Q10",
+    "query": "What was JPMorgan Chase's total assets as of December 31, 2025?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": false,
+        "answer": "I didn't find any relevant documents.",
+        "llm_calls": 1,
+        "seconds": 0.82,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": false,
+        "answer": "JPMorgan Chase reported total assets of **$2,142,534 million** as of December 31, 2025. 【Document 1】",
+        "llm_calls": 1,
+        "seconds": 7.67,
+        "error": null
+      },
+      "self_healing": {
+        "correct": null,
+        "llm_calls": null,
+        "seconds": 1.74,
+        "error": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-20b` in organization `org_[redacted]` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 198858, Requested 2011. Please try again in 6m15.408s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+      }
+    }
+  }
+]

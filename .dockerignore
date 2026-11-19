@@ -4,7 +4,16 @@ __pycache__/
 .env
 .git/
 .gitignore
+.pytest_cache/
+*.log
+
+# Local test artifacts and tests (not needed at runtime)
 test_*.py
 test_*.pdf
 test_*.docx
-*.log
+tests/
+
+# Local data that must never be baked into the image
+data/
+qdrant_data/
+*.pdf

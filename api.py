@@ -7,10 +7,11 @@ from pydantic import BaseModel
 
 from langgraph_agent.document_loader import load_pdf_from_url
 from langgraph_agent.retrieve_docs import (
+    COLLECTION_NAME,
     embed_docs,
     get_qdrant_client,
 )
-from langgraph_agent.graph import build_graph
+from langgraph_agent.graph import APP_STRATEGY, build_graph, make_initial_state
 
 
 load_dotenv()
@@ -21,10 +22,6 @@ app = FastAPI(
     description="FastAPI backend for the Adaptive Self-Healing RAG system.",
     version="1.0.0",
 )
-
-
-
-COLLECTION_NAME = "documents"
 
 
 class IngestRequest(BaseModel):
@@ -117,7 +114,7 @@ def query_documents(request: QueryRequest):
     client = None
 
     try:
-        # Open ONE persistent Qdrant client
+        # Client used only to check that the knowledge base exists.
         client = get_qdrant_client()
         # Make sure the knowledge base exists
         if not client.collection_exists(
@@ -141,32 +138,17 @@ def query_documents(request: QueryRequest):
         # Build the self-healing LangGraph workflow
         app_graph = build_graph()
 
-        # Pass the already-open Qdrant client
-        # into the graph state.
-        initial_state = {
-            "text": [],
-            "query": request.question,
-            "retrieval_mode": "original",
-            "retrieval_budget": 5,
-            "retrieved_docs": [],
-            "answer": "",
-            "score": 0.0,
-            "failure_reason": "none",
-            "retry_count": 0,
-            "max_retries": 3,
-            "healing_trace": [],
-            "vector_store": client
-        }
-
         # Run the complete self-healing RAG pipeline
         result = app_graph.invoke(
-            initial_state
+            make_initial_state(request.question, strategy=APP_STRATEGY)
         )
 
         return {
             "answer": result.get("answer", ""),
             "score": result.get("score", 0.0),
+            "retrieval_strategy": result.get("retrieval_strategy"),
             "retrieval_mode": result.get("retrieval_mode"),
+            "search_query": result.get("search_query"),
             "retrieval_budget": result.get("retrieval_budget"),
             "retry_count": result.get("retry_count"),
             "healing_trace": result.get(
@@ -185,6 +167,5 @@ def query_documents(request: QueryRequest):
         )
 
     finally:
-        # Close the SAME Qdrant client used by the graph
         if client is not None:
             client.close()

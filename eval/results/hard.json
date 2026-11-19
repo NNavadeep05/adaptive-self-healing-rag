@@ -1,0 +1,37 @@
+[
+  {
+    "run": 1,
+    "id": "Q11",
+    "query": "What was Microsoft's FY2026 revenue compared with NVIDIA's FY2026 revenue?",
+    "systems": {
+      "wide_rerank_k11": {
+        "correct": null,
+        "answer": null,
+        "llm_calls": 1,
+        "seconds": 5.0,
+        "error": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_[redacted]` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199603, Requested 2344. Please try again in 14m1.104s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+      },
+      "hybrid_single_pass": {
+        "correct": null,
+        "answer": null,
+        "llm_calls": 1,
+        "seconds": 13.72,
+        "error": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_[redacted]` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199572, Requested 2037. Please try again in 11m35.088s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+      },
+      "self_healing_v2": {
+        "correct": null,
+        "answer": null,
+        "llm_calls": null,
+        "seconds": 19.94,
+        "error": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_[redacted]` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199466, Requested 2085. Please try again in 11m10.031999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+      },
+      "self_healing": {
+        "correct": null,
+        "answer": null,
+        "llm_calls": null,
+        "seconds": 0.98,
+        "error": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_[redacted]` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199464, Requested 1307. Please try again in 5m33.072s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+      }
+    }
+  }
+]

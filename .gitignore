@@ -3,9 +3,11 @@ venv/
 __pycache__/
 *.pyc
 .env
-# Local test files
-test_*.py
-test_document.*
+# Local scratch test files in the project root
+# (the real test suite lives in tests/ and is tracked)
+/test_*.py
+/test_document.*
+.pytest_cache/
 Navadeep_Nandedapu_Resume.pdf
 
 # Local Qdrant storage
@@ -13,3 +15,6 @@ qdrant_data/
 
 # Local evaluation corpus
 data/
+
+# Personal interview notes (not part of the project)
+interview_prep/

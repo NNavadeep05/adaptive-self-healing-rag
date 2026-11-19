@@ -1,17 +1,52 @@
 import os
 import json
-import uuid
+import logging
+from functools import lru_cache
 
 from dotenv import load_dotenv
 from openai import OpenAI
 from qdrant_client import QdrantClient
-from qdrant_client.models import VectorParams, Distance, PointStruct
+from qdrant_client.models import (
+    Distance,
+    FieldCondition,
+    Filter,
+    IsEmptyCondition,
+    IsNullCondition,
+    MatchAny,
+    PayloadField,
+    PointStruct,
+    VectorParams,
+)
 from fastembed import TextEmbedding
 from fastembed.rerank.cross_encoder import TextCrossEncoder
+
+from langgraph_agent.metadata import point_id
 
 
 # Load environment variables
 load_dotenv()
+
+logger = logging.getLogger(__name__)
+
+EMBEDDING_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
+RERANKER_MODEL_NAME = "jinaai/jina-reranker-v2-base-multilingual"
+EMBED_BATCH_SIZE = 32
+
+
+# ---------------------------------------------------------
+# MODEL CACHE
+# ---------------------------------------------------------
+# Loading these models is expensive (the reranker is ~1 GB), so each
+# is loaded once per process instead of on every retrieval call.
+
+@lru_cache(maxsize=1)
+def get_embedding_model() -> TextEmbedding:
+    return TextEmbedding(model_name=EMBEDDING_MODEL_NAME)
+
+
+@lru_cache(maxsize=1)
+def get_reranker() -> TextCrossEncoder:
+    return TextCrossEncoder(model_name=RERANKER_MODEL_NAME)
 
 
 # ---------------------------------------------------------
@@ -23,7 +58,11 @@ QDRANT_URL = os.environ.get(
     "http://localhost:6333"
 )
 
-COLLECTION_NAME = "documents"
+# Overridable so evaluation can use a dedicated, reproducible collection.
+COLLECTION_NAME = os.environ.get(
+    "QDRANT_COLLECTION",
+    "documents"
+)
 
 
 def get_qdrant_client():
@@ -46,82 +85,65 @@ def get_qdrant_client():
 # EMBEDDING + STORAGE
 # ---------------------------------------------------------
 
-def embed_docs(chunks):
+def _payload_filter(companies: list[str] | None) -> Filter | None:
+    """
+    Restrict a search to chunks of the given companies (None = no filter).
+
+    Chunks without a company tag (e.g. user uploads with arbitrary file
+    names) stay eligible, so a filter can never hide them.
+    """
+    if not companies:
+        return None
+    return Filter(should=[
+        FieldCondition(key="company", match=MatchAny(any=companies)),
+        IsNullCondition(is_null=PayloadField(key="company")),
+        IsEmptyCondition(is_empty=PayloadField(key="company")),
+    ])
+
+
+def embed_docs(chunks, collection_name: str | None = None):
     """
     Embed document chunks and store them in Qdrant.
 
-    Each chunk stores:
-        - description
-        - source_pdf
-
-    Qdrant provides persistent storage through
-    the external Qdrant service.
+    Each point stores the chunk text ("description"), its source file and,
+    when known, its company / fiscal year / chunk index. Point ids are
+    deterministic, so re-ingesting the same file overwrites its chunks
+    instead of duplicating them.
     """
-
-    encoder_name = "sentence-transformers/all-MiniLM-L6-v2"
-
-    # Initialize embedding model
-    embedding_model = TextEmbedding(
-        model_name=encoder_name
-    )
-
-    # Connect to Qdrant server
+    collection = collection_name or COLLECTION_NAME
     client = get_qdrant_client()
 
-    # Create collection if it does not exist
-    if not client.collection_exists(COLLECTION_NAME):
-
+    if not client.collection_exists(collection):
         client.create_collection(
-            collection_name=COLLECTION_NAME,
+            collection_name=collection,
             vectors_config={
                 "embedding": VectorParams(
-                    size=client.get_embedding_size(
-                        encoder_name
-                    ),
-                    distance=Distance.COSINE
+                    size=client.get_embedding_size(EMBEDDING_MODEL_NAME),
+                    distance=Distance.COSINE,
                 )
-            }
+            },
         )
 
-    # Extract chunk text
-    texts = [
-        chunk["text"]
-        for chunk in chunks
+    texts = [chunk["text"] for chunk in chunks]
+    # Small batches keep peak memory low (a 256-chunk batch needs ~200 MB).
+    vectors = get_embedding_model().embed(texts, batch_size=EMBED_BATCH_SIZE)
+
+    points = [
+        PointStruct(
+            id=point_id(chunk["source_pdf"], chunk.get("chunk_index", i), chunk["text"]),
+            payload={
+                "description": chunk["text"],
+                "source_pdf": chunk["source_pdf"],
+                "company": chunk.get("company"),
+                "fiscal_year": chunk.get("fiscal_year"),
+                "chunk_index": chunk.get("chunk_index", i),
+            },
+            vector={"embedding": vector},
+        )
+        for i, (chunk, vector) in enumerate(zip(chunks, vectors))
     ]
 
-    # Generate embeddings
-    vectors = list(
-        embedding_model.embed(texts)
-    )
-
-    # Create Qdrant points
-    points = []
-
-    for chunk, vector in zip(chunks, vectors):
-
-        point_id = str(
-            uuid.uuid4()
-        )
-
-        points.append(
-            PointStruct(
-                id=point_id,
-                payload={
-                    "description": chunk["text"],
-                    "source_pdf": chunk["source_pdf"]
-                },
-                vector={
-                    "embedding": vector
-                }
-            )
-        )
-
-    # Upload to Qdrant
-    client.upload_points(
-        collection_name=COLLECTION_NAME,
-        points=points
-    )
-
+    client.upload_points(collection_name=collection, points=points)
     return client
 
 
@@ -129,56 +151,46 @@ def embed_docs(chunks):
 # RETRIEVAL
 # ---------------------------------------------------------
 
+def dense_search(
+    client,
+    query: str,
+    k: int,
+    collection_name: str | None = None,
+    companies: list[str] | None = None,
+) -> list[tuple[str, str]]:
+    """Top-k (point id, chunk text) pairs by embedding similarity."""
+    query_embedding = next(iter(get_embedding_model().query_embed(query)))
+    results = client.query_points(
+        collection_name=collection_name or COLLECTION_NAME,
+        using="embedding",
+        query=query_embedding,
+        query_filter=_payload_filter(companies),
+        with_payload=True,
+        limit=k,
+    )
+
+    for i, point in enumerate(results.points):
+        logger.debug(
+            "Rank %d | Score: %.4f | Source: %s | Text: %.200s",
+            i + 1,
+            point.score,
+            point.payload.get("source_pdf"),
+            point.payload["description"],
+        )
+
+    return [(str(point.id), point.payload["description"]) for point in results.points]
+
+
 def get_doc_answer(
     client,
     query: str,
-    k: int = 2
+    k: int = 2,
+    collection_name: str | None = None,
 ) -> list[str]:
     """
-    Retrieve the top-k document chunks relevant to a query.
+    Retrieve the top-k document chunks relevant to a query (v1: dense only).
     """
-
-    encoder_name = "sentence-transformers/all-MiniLM-L6-v2"
-
-    # Initialize embedding model
-    embedding_model = TextEmbedding(
-        model_name=encoder_name
-    )
-
-    # Embed user query
-    query_embedding = list(
-        embedding_model.query_embed(query)
-    )[0]
-
-    # Search Qdrant
-    results = client.query_points(
-        collection_name=COLLECTION_NAME,
-        using="embedding",
-        query=query_embedding,
-        with_payload=True,
-        limit=k
-    )
-
-    print("\n--- Qdrant Retrieval Results ---")
-
-    for i, point in enumerate(results.points):
-
-        print(
-            f"Rank {i + 1} | "
-            f"Score: {point.score:.4f} | "
-            f"Source: {point.payload.get('source_pdf')} | "
-            f"Text: {point.payload['description']}"
-        )
-
-    print("--------------------------------\n")
-
-    # Return retrieved text
-    retrieved_docs = [
-        point.payload["description"]
-        for point in results.points
-    ]
-
-    return retrieved_docs
+    return [text for _, text in dense_search(client, query, k, collection_name)]
 
 
 # ---------------------------------------------------------
@@ -193,12 +205,8 @@ def rerank(
     Rerank retrieved documents using a cross-encoder.
     """
 
-    reranker = TextCrossEncoder(
-        model_name="jinaai/jina-reranker-v2-base-multilingual"
-    )
-
     scores = list(
-        reranker.rerank(
+        get_reranker().rerank(
             query,
             retrieved_docs
         )
@@ -236,7 +244,10 @@ def get_groq_client():
         api_key=os.environ.get(
             "GROQ_API_KEY"
         ),
-        base_url="https://api.groq.com/openai/v1"
+        base_url="https://api.groq.com/openai/v1",
+        # Back off and retry on rate limits / transient errors
+        # (the SDK honours Groq's retry-after headers).
+        max_retries=6,
     )
 
 
@@ -244,15 +255,35 @@ def get_groq_client():
 # ANSWER GENERATION
 # ---------------------------------------------------------
 
+# v2 answer rules. They target the failure modes seen in evaluation:
+# summing segment figures instead of quoting the reported total (Q05),
+# answering with another company's figures (Q09), and restating numbers
+# in rounded billions so they no longer match the filing.
+GROUNDED_ANSWER_RULES = (
+    "Rules:\n"
+    "- Each document starts with a header naming its company and fiscal "
+    "year. Use only documents about the company the question asks about.\n"
+    "- Quote figures exactly as reported, with the filing's units "
+    "(e.g. '$57,048 million'). Do not round or convert them.\n"
+    "- Prefer a consolidated total that the filing reports directly. "
+    "Never compute a total by adding segments when the total is reported.\n"
+    "- If a calculation is asked for, show the reported inputs and the "
+    "formula, then the result.\n"
+)
+
+
 def generate_answer(
     query: str,
-    retrieved_docs: list[str]
+    retrieved_docs: list[str],
+    grounded: bool = False,
 ) -> str:
     """
     Generate an answer using retrieved documents.
 
     Generation model:
         openai/gpt-oss-120b via Groq
+
+    ``grounded=True`` (v2) adds GROUNDED_ANSWER_RULES to the prompt.
     """
 
     client = get_groq_client()
@@ -272,6 +303,8 @@ def generate_answer(
         "documents, respond with "
         "'I didn't find any relevant documents.'"
     )
+    if grounded:
+        system_content = f"{system_content}\n\n{GROUNDED_ANSWER_RULES}"
 
     ai_answer = client.chat.completions.create(
         model="openai/gpt-oss-120b",

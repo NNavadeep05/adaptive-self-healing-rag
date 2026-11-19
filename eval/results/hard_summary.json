@@ -1,0 +1,30 @@
+{
+  "wide_rerank_k11": {
+    "cells": 1,
+    "errors": 1,
+    "accuracy": null,
+    "mean_llm_calls": null,
+    "mean_seconds": null
+  },
+  "hybrid_single_pass": {
+    "cells": 1,
+    "errors": 1,
+    "accuracy": null,
+    "mean_llm_calls": null,
+    "mean_seconds": null
+  },
+  "self_healing": {
+    "cells": 1,
+    "errors": 1,
+    "accuracy": null,
+    "mean_llm_calls": null,
+    "mean_seconds": null
+  },
+  "self_healing_v2": {
+    "cells": 1,
+    "errors": 1,
+    "accuracy": null,
+    "mean_llm_calls": null,
+    "mean_seconds": null
+  }
+}

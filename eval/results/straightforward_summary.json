@@ -1,0 +1,41 @@
+{
+  "plain_rag_k5": {
+    "cells": 35,
+    "errors": 1,
+    "accuracy": 0.5,
+    "mean_llm_calls": 1,
+    "mean_seconds": 2.3
+  },
+  "wide_rerank_k11": {
+    "cells": 34,
+    "errors": 1,
+    "accuracy": 0.606,
+    "mean_llm_calls": 1,
+    "mean_seconds": 4.7
+  },
+  "hybrid_single_pass": {
+    "cells": 14,
+    "errors": 1,
+    "accuracy": 1,
+    "mean_llm_calls": 1,
+    "mean_seconds": 10.4
+  },
+  "self_healing": {
+    "cells": 31,
+    "errors": 4,
+    "accuracy": 0.704,
+    "mean_llm_calls": 5.67,
+    "mean_seconds": 46.8,
+    "retry_rate": 0.481,
+    "silent_failures": 5
+  },
+  "self_healing_v2": {
+    "cells": 9,
+    "errors": 2,
+    "accuracy": 1,
+    "mean_llm_calls": 3,
+    "mean_seconds": 20.2,
+    "retry_rate": 0,
+    "silent_failures": 0
+  }
+}

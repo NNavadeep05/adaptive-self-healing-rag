@@ -1,13 +1,31 @@
-from typing import TypedDict, List, Any
+"""
+LangGraph nodes for the self-healing RAG loop.
 
+Two retrieval strategies share the same graph:
+
+    "dense"  (v1)  dense top-k, reranking switched on by the first retry,
+                   every failure healed by "retrieve a few more chunks".
+    "hybrid" (v2)  company filter + dense/BM25 fusion + rerank-truncate,
+                   grounded answer prompt, and a failure-aware healing
+                   policy (widen retrieval vs. rewrite the query).
+"""
+
+from typing import Any, List, TypedDict
+
+from langgraph_agent.healing_policy import REWRITE, WIDEN_STEP, choose_healing_action
+from langgraph_agent.hybrid_retrieval import hybrid_search
+from langgraph_agent.query_rewrite import rewrite_query
 from langgraph_agent.retrieve_docs import (
-    get_qdrant_client,
-    get_doc_answer,
-    rerank,
     generate_answer,
+    get_doc_answer,
+    get_qdrant_client,
     llm_judge,
+    rerank,
     self_verify,
 )
+
+HYBRID = "hybrid"
+JUDGE_PASS_SCORE = 0.8
 
 
 class RAGState(TypedDict):
@@ -16,8 +34,11 @@ class RAGState(TypedDict):
     retrieved_docs: List[str]
 
     # Retrieval
-    retrieval_mode: str
+    retrieval_strategy: str      # "dense" (v1) or "hybrid" (v2)
+    retrieval_mode: str          # v1 only: "original" or "dense_rerank"
     retrieval_budget: int
+    search_query: str            # v2: may be rewritten by the healing loop
+    collection: Any              # Qdrant collection (None = default)
 
     # Generation
     answer: str
@@ -35,9 +56,14 @@ class RAGState(TypedDict):
     retry_count: int
     max_retries: int
     healing_trace: List[str]
+    healing_actions: List[str]   # v2: actions already tried
 
     # Qdrant client
     vector_store: Any
+
+
+def _is_hybrid(state: RAGState) -> bool:
+    return state.get("retrieval_strategy") == HYBRID
 
 
 # ---------------------------------------------------------
@@ -47,30 +73,29 @@ class RAGState(TypedDict):
 def retrieve_node(state: RAGState):
     query = state["query"]
     budget = state["retrieval_budget"]
-
-    # Connect to the external Qdrant service.
     client = get_qdrant_client()
 
-    # Retrieve documents from the existing knowledge base.
-    results = get_doc_answer(
-        client=client,
-        query=query,
-        k=budget,
-    )
-
-    # Apply reranking when healing is triggered.
-    if state["retrieval_mode"] == "dense_rerank":
-        results = rerank(
-            query=query,
-            retrieved_docs=results,
+    if _is_hybrid(state):
+        results = hybrid_search(
+            client=client,
+            query=state.get("search_query") or query,
+            k=budget,
+            collection_name=state.get("collection"),
+            filter_query=query,  # detect companies from the user's own words
         )
+    else:
+        results = get_doc_answer(
+            client=client,
+            query=query,
+            k=budget,
+            collection_name=state.get("collection"),
+        )
+        # v1 applies reranking only once healing has been triggered.
+        if state["retrieval_mode"] == "dense_rerank":
+            results = rerank(query=query, retrieved_docs=results)
 
     return {
         "retrieved_docs": results,
-        "healing_trace": state.get(
-            "healing_trace",
-            []
-        ),
         "vector_store": client,
     }
 
@@ -83,11 +108,9 @@ def generate_node(state: RAGState):
     answer = generate_answer(
         query=state["query"],
         retrieved_docs=state["retrieved_docs"],
+        grounded=_is_hybrid(state),
     )
-
-    return {
-        "answer": answer
-    }
+    return {"answer": answer}
 
 
 # ---------------------------------------------------------
@@ -96,31 +119,20 @@ def generate_node(state: RAGState):
 
 def verify_node(state: RAGState):
     """
-    Verify whether the generated answer is supported
-    by the retrieved documents.
-
-    This is our entailment/faithfulness-based version
-    of the paper's Self-Verification Module.
+    Verify whether the generated answer is supported by the retrieved
+    documents (the paper's Self-Verification Module, implemented as an
+    LLM entailment / faithfulness check).
     """
-
     verification = self_verify(
         query=state["query"],
         retrieved_docs=state["retrieved_docs"],
         answer=state["answer"],
     )
-
     status = verification["verification_status"]
-    verification_score = verification["verification_score"]
-
-    # Keep verification as an independent signal.
-    unsupported_claims = (
-        status != "supported"
-    )
-
     return {
         "verification_status": status,
-        "verification_score": verification_score,
-        "unsupported_claims": unsupported_claims,
+        "verification_score": verification["verification_score"],
+        "unsupported_claims": status != "supported",
     }
 
 
@@ -130,45 +142,26 @@ def verify_node(state: RAGState):
 
 def score_node(state: RAGState):
     """
-    Evaluate the generated answer using GPT-OSS-20B.
-
-    The judge checks:
-        - document relevance
-        - context sufficiency
-        - overall answer quality
-
-    The verification signal is kept separately and is
-    given priority when determining the failure reason.
+    Judge relevance, context sufficiency and overall quality, and turn
+    the signals into one failure reason. Verification has priority.
     """
-
     judge = llm_judge(
         query=state["query"],
         retrieved_docs=state["retrieved_docs"],
         answer=state["answer"],
     )
 
-    score = judge["score"]
-    relevant = judge["relevant_docs"]
-    sufficient = judge["sufficient_context"]
-
-    # Preserve the independent verification signal.
-    if state.get(
-        "unsupported_claims",
-        False
-    ):
+    if state.get("unsupported_claims", False):
         failure_reason = "unsupported_claims"
-
-    elif not relevant:
+    elif not judge["relevant_docs"]:
         failure_reason = "irrelevant_docs"
-
-    elif not sufficient:
+    elif not judge["sufficient_context"]:
         failure_reason = "missing_context"
-
     else:
         failure_reason = "none"
 
     return {
-        "score": score,
+        "score": judge["score"],
         "failure_reason": failure_reason,
     }
 
@@ -178,33 +171,14 @@ def score_node(state: RAGState):
 # ---------------------------------------------------------
 
 def should_retry(state: RAGState):
-    """
-    Decide whether the system should activate
-    the self-healing retrieval process.
-    """
-
-    # Stop once the maximum retry limit is reached.
+    """Retry on a low judge score, a named failure, or unsupported claims."""
     if state["retry_count"] >= state["max_retries"]:
         return "end"
 
-    failure_reason = state.get(
-        "failure_reason",
-        "none"
-    )
-
-    unsupported_claims = state.get(
-        "unsupported_claims",
-        False
-    )
-
-    # Retry when:
-    # 1. Judge score is below threshold
-    # 2. Judge identifies a retrieval/context failure
-    # 3. Self-verification finds unsupported claims
     if (
-        state["score"] < 0.8
-        or failure_reason != "none"
-        or unsupported_claims
+        state["score"] < JUDGE_PASS_SCORE
+        or state.get("failure_reason", "none") != "none"
+        or state.get("unsupported_claims", False)
     ):
         return "retry"
 
@@ -215,107 +189,57 @@ def should_retry(state: RAGState):
 # RETRY / RETRIEVAL REFINEMENT NODE
 # ---------------------------------------------------------
 
-def retry_node(state: RAGState):
-    """
-    Retrieval Refinement Engine.
+# v1: failure -> (extra chunks, trace message)
+_V1_HEALING = {
+    "missing_context": (3, "Missing context → increased retrieval budget by 3 + enabled reranking"),
+    "irrelevant_docs": (2, "Irrelevant docs → increased retrieval budget by 2 + enabled reranking"),
+    "unsupported_claims": (2, "Unsupported claims → enabled reranking + increased retrieval budget by 2"),
+}
+_V1_LOW_SCORE = (2, "Low judge score → enabled reranking + increased retrieval budget by 2")
 
-    Adjust retrieval strategy based on the detected
-    failure type before the next retrieval attempt.
-    """
 
-    failure = state["failure_reason"]
-    trace = state.get(
-        "healing_trace",
-        []
-    )
+def _retry_v1(state: RAGState) -> dict:
+    trace = state.get("healing_trace", [])
+    step = _V1_HEALING.get(state["failure_reason"])
+    if step is None and state["score"] < JUDGE_PASS_SCORE:
+        step = _V1_LOW_SCORE
+    if step is None:
+        return {"healing_trace": [*trace, "No healing needed"]}
 
-    # -----------------------------------------------------
-    # Missing context
-    # -----------------------------------------------------
-
-    if failure == "missing_context":
-
-        trace.append(
-            "Missing context → increased retrieval "
-            "budget by 3 + enabled reranking"
-        )
-
-        return {
-            "retrieval_budget": (
-                state["retrieval_budget"] + 3
-            ),
-            "retrieval_mode": "dense_rerank",
-            "healing_trace": trace,
-        }
-
-    # -----------------------------------------------------
-    # Irrelevant documents
-    # -----------------------------------------------------
-
-    if failure == "irrelevant_docs":
-
-        trace.append(
-            "Irrelevant docs → increased retrieval "
-            "budget by 2 + enabled reranking"
-        )
-
-        return {
-            "retrieval_budget": (
-                state["retrieval_budget"] + 2
-            ),
-            "retrieval_mode": "dense_rerank",
-            "healing_trace": trace,
-        }
-
-    # -----------------------------------------------------
-    # Unsupported claims
-    # -----------------------------------------------------
-
-    if failure == "unsupported_claims":
-
-        trace.append(
-            "Unsupported claims → enabled reranking "
-            "+ increased retrieval budget by 2"
-        )
-
-        return {
-            "retrieval_budget": (
-                state["retrieval_budget"] + 2
-            ),
-            "retrieval_mode": "dense_rerank",
-            "healing_trace": trace,
-        }
-
-    # -----------------------------------------------------
-    # Generic low-score failure
-    # -----------------------------------------------------
-
-    if state["score"] < 0.8:
-
-        trace.append(
-            "Low judge score → enabled reranking "
-            "+ increased retrieval budget by 2"
-        )
-
-        return {
-            "retrieval_budget": (
-                state["retrieval_budget"] + 2
-            ),
-            "retrieval_mode": "dense_rerank",
-            "healing_trace": trace,
-        }
-
-    # -----------------------------------------------------
-    # No healing required
-    # -----------------------------------------------------
-
-    trace.append(
-        "No healing needed"
-    )
-
+    extra, message = step
     return {
-        "healing_trace": trace
+        "retrieval_budget": state["retrieval_budget"] + extra,
+        "retrieval_mode": "dense_rerank",
+        "healing_trace": [*trace, message],
     }
+
+
+def _retry_v2(state: RAGState) -> dict:
+    trace = state.get("healing_trace", [])
+    actions = state.get("healing_actions", [])
+    failure = state["failure_reason"]
+    action = choose_healing_action(failure, actions)
+
+    if action == REWRITE:
+        new_query = rewrite_query(state["query"])
+        note = "unchanged (rewrite failed)" if new_query == state["query"] else new_query
+        return {
+            "search_query": new_query,
+            "healing_actions": [*actions, action],
+            "healing_trace": [*trace, f"{failure} → rewrote search query: {note}"],
+        }
+
+    new_budget = state["retrieval_budget"] + WIDEN_STEP
+    return {
+        "retrieval_budget": new_budget,
+        "healing_actions": [*actions, action],
+        "healing_trace": [*trace, f"{failure} → widened retrieval to k={new_budget}"],
+    }
+
+
+def retry_node(state: RAGState):
+    """Retrieval Refinement Engine: adjust retrieval based on the failure type."""
+    return _retry_v2(state) if _is_hybrid(state) else _retry_v1(state)
 
 
 # ---------------------------------------------------------
@@ -323,8 +247,4 @@ def retry_node(state: RAGState):
 # ---------------------------------------------------------
 
 def retry_count_node(state: RAGState):
-    return {
-        "retry_count": (
-            state["retry_count"] + 1
-        )
-    }
+    return {"retry_count": state["retry_count"] + 1}

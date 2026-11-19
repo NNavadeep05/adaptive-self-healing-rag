@@ -25,9 +25,10 @@
     "query": "What was Walmart's total revenue for fiscal year 2026?",
     "target_companies": ["Walmart"],
     "fact_type": "revenue",
-    "ground_truth": "713.2 billion",
+    "ground_truth": "713,163",
+    "accepted_variants": ["713.2 billion"],
     "expected_answerable": true,
-    "notes": "Single stated financial fact from Walmart's 2026 10-K."
+    "notes": "Single stated financial fact from Walmart's 2026 10-K. The filing reports consolidated total revenues as $713,163 million in the income statement and as $713.2 billion in MD&A; both forms are accepted."
   },
   {
     "id": "Q04",
@@ -95,8 +96,331 @@
     "query": "What was JPMorgan Chase's total assets as of December 31, 2025?",
     "target_companies": ["JPMorgan Chase"],
     "fact_type": "total_assets",
-    "ground_truth": "2,142,534",
+    "ground_truth": "4,424,900",
     "expected_answerable": true,
-    "notes": "Single balance-sheet figure stated in JPMorgan Chase's 2025 10-K."
+    "notes": "Firm-wide total assets, Selected financial data: 'Total assets | 4,424,900 | 4,002,814 | 3,875,393'; also total liabilities and stockholders' equity on the consolidated balance sheet. Corrected from 2,142,534, which is the Commercial & Investment Bank segment's total assets (page 71, Selected metrics)."
+  }
+,
+  {
+    "id": "Q11",
+    "bucket": "hard",
+    "query": "What was Microsoft's FY2026 revenue compared with NVIDIA's FY2026 revenue?",
+    "target_companies": ["Microsoft", "NVIDIA"],
+    "fact_type": "comparison",
+    "ground_truth": "Microsoft: $331,839 million; NVIDIA: $215,938 million; Microsoft is higher by $115,901 million.",
+    "answer_facts": "331,839; 215,938",
+    "evidence_facts": "331,839; 215,938",
+    "expected_answerable": true,
+    "notes": "Microsoft FY26 revenue ($331,839 million) from CONSOLIDATED STATEMENTS OF INCOME. NVIDIA FY26 revenue ($215,938 million) from CONSOLIDATED STATEMENTS OF INCOME."
+  },
+  {
+    "id": "Q12",
+    "bucket": "hard",
+    "query": "Which was higher in FY2026, Microsoft's or NVIDIA's net income, and by how much?",
+    "target_companies": ["Microsoft", "NVIDIA"],
+    "fact_type": "comparison",
+    "ground_truth": "Microsoft: $133,749 million; NVIDIA: $120,067 million; Microsoft is higher by $13,682 million.",
+    "answer_facts": "133,749; 120,067",
+    "evidence_facts": "133,749; 120,067",
+    "expected_answerable": true,
+    "notes": "Microsoft FY26 net income ($133,749 million). NVIDIA FY26 net income ($120,067 million)."
+  },
+  {
+    "id": "Q13",
+    "bucket": "hard",
+    "query": "How did Walmart's FY2026 revenue compare with Amazon's FY2025 net sales?",
+    "target_companies": ["Walmart", "Amazon"],
+    "fact_type": "comparison",
+    "ground_truth": "Walmart: $713,163 million; Amazon: $716,924 million; Amazon is higher by $3,761 million.",
+    "answer_facts": "713,163; 716,924",
+    "evidence_facts": "713,163; 716,924",
+    "expected_answerable": true,
+    "notes": "Walmart FY26 total revenues ($713,163 million). Amazon FY25 net sales ($716,924 million)."
+  },
+  {
+    "id": "Q14",
+    "bucket": "hard",
+    "query": "Which company had higher reported revenue: Walmart in FY2026 or Amazon in FY2025, and what was the difference?",
+    "target_companies": ["Walmart", "Amazon"],
+    "fact_type": "comparison",
+    "ground_truth": "Amazon in FY2025 was higher. Amazon: $716,924 million; Walmart: $713,163 million; difference is $3,761 million.",
+    "answer_facts": "716,924; 713,163",
+    "evidence_facts": "716,924; 713,163",
+    "expected_answerable": true,
+    "notes": "Walmart FY26 total revenues ($713,163 million). Amazon FY25 net sales ($716,924 million)."
+  },
+  {
+    "id": "Q15",
+    "bucket": "hard",
+    "query": "Compare Microsoft's FY2026 revenue with Walmart's FY2026 revenue. Which company reported higher revenue?",
+    "target_companies": ["Microsoft", "Walmart"],
+    "fact_type": "comparison",
+    "ground_truth": "Walmart: $713,163 million; Microsoft: $331,839 million; Walmart is higher by $381,324 million.",
+    "answer_facts": "713,163; 331,839",
+    "evidence_facts": "713,163; 331,839",
+    "expected_answerable": true,
+    "notes": "Walmart FY26 total revenues ($713,163 million). Microsoft FY26 revenue ($331,839 million)."
+  },
+  {
+    "id": "Q16",
+    "bucket": "hard",
+    "query": "Compare NVIDIA's FY2026 revenue with Amazon's FY2025 net sales. Which company reported higher revenue?",
+    "target_companies": ["NVIDIA", "Amazon"],
+    "fact_type": "comparison",
+    "ground_truth": "Amazon: $716,924 million; NVIDIA: $215,938 million; Amazon is higher by $500,986 million.",
+    "answer_facts": "716,924; 215,938",
+    "evidence_facts": "716,924; 215,938",
+    "expected_answerable": true,
+    "notes": "Amazon FY25 net sales ($716,924 million). NVIDIA FY26 revenue ($215,938 million)."
+  },
+  {
+    "id": "Q17",
+    "bucket": "hard",
+    "query": "What was Microsoft's net profit margin for FY2026, calculated from its reported revenue and net income?",
+    "target_companies": ["Microsoft"],
+    "fact_type": "computed_metric",
+    "ground_truth": "Net margin = net income / revenue * 100 = $133,749 million / $331,839 million * 100 = 40.31%.",
+    "answer_facts": "40.31%",
+    "evidence_facts": "133,749; 331,839",
+    "accepted_variants": ["40.3%"],
+    "expected_answerable": true,
+    "notes": "Microsoft FY26 net income ($133,749 million) and revenue ($331,839 million)."
+  },
+  {
+    "id": "Q18",
+    "bucket": "hard",
+    "query": "What was NVIDIA's net profit margin for FY2026, calculated from its reported revenue and net income?",
+    "target_companies": ["NVIDIA"],
+    "fact_type": "computed_metric",
+    "ground_truth": "Net margin = net income / revenue * 100 = $120,067 million / $215,938 million * 100 = 55.60%.",
+    "answer_facts": "55.60%",
+    "evidence_facts": "120,067; 215,938",
+    "accepted_variants": ["55.6%"],
+    "expected_answerable": true,
+    "notes": "NVIDIA FY26 net income ($120,067 million) and revenue ($215,938 million)."
+  },
+  {
+    "id": "Q19",
+    "bucket": "hard",
+    "query": "What fiscal year-end date did Microsoft use for FY2026, and how does it differ from NVIDIA's FY2026 fiscal year-end?",
+    "target_companies": ["Microsoft", "NVIDIA"],
+    "fact_type": "fiscal_year_end",
+    "ground_truth": "Microsoft: June 30, 2026; NVIDIA: January 25, 2026. Microsoft's fiscal year ends about five months later than NVIDIA's.",
+    "answer_facts": "June 30; January 25",
+    "evidence_facts": "June 30; January 25",
+    "expected_answerable": true,
+    "notes": "Microsoft FY26 ends June 30, 2026. NVIDIA FY26 ends January 25, 2026."
+  },
+  {
+    "id": "Q20",
+    "bucket": "hard",
+    "query": "When comparing Walmart FY2026 and Amazon FY2025, what were the respective fiscal year-end dates reported in their filings?",
+    "target_companies": ["Walmart", "Amazon"],
+    "fact_type": "fiscal_year_end",
+    "ground_truth": "Walmart: January 31, 2026; Amazon: December 31, 2025.",
+    "answer_facts": "January 31; December 31",
+    "evidence_facts": "January 31; December 31",
+    "expected_answerable": true,
+    "notes": "Walmart FY26 ends January 31, 2026. Amazon FY25 ends December 31, 2025."
+  },
+  {
+    "id": "Q21",
+    "bucket": "straightforward",
+    "query": "What was Amazon's net income for 2025?",
+    "target_companies": ["Amazon"],
+    "fact_type": "net_income",
+    "ground_truth": "77,670",
+    "expected_answerable": true,
+    "notes": "Consolidated Statements of Operations: 'Net income | 30,425 | 59,248 | 77,670' (2023 | 2024 | 2025)."
+  },
+  {
+    "id": "Q22",
+    "bucket": "straightforward",
+    "query": "What were Amazon's total assets as of December 31, 2025?",
+    "target_companies": ["Amazon"],
+    "fact_type": "total_assets",
+    "ground_truth": "818,042",
+    "expected_answerable": true,
+    "notes": "Consolidated Balance Sheets: 'Total assets | 624,894 | 818,042' (2024 | 2025)."
+  },
+  {
+    "id": "Q23",
+    "bucket": "straightforward",
+    "query": "What was Amazon's diluted earnings per share for 2025?",
+    "target_companies": ["Amazon"],
+    "fact_type": "eps",
+    "ground_truth": "7.17",
+    "expected_answerable": true,
+    "notes": "Consolidated Statements of Operations: 'Diluted earnings per share | 2.90 | 5.53 | 7.17' (2023 | 2024 | 2025)."
+  },
+  {
+    "id": "Q24",
+    "bucket": "straightforward",
+    "query": "How much cash and cash equivalents did Amazon report as of December 31, 2025?",
+    "target_companies": ["Amazon"],
+    "fact_type": "cash",
+    "ground_truth": "86,810",
+    "expected_answerable": true,
+    "notes": "Consolidated Balance Sheets: 'Cash and cash equivalents | 78,779 | 86,810' (2024 | 2025)."
+  },
+  {
+    "id": "Q25",
+    "bucket": "straightforward",
+    "query": "What was JPMorgan Chase's reported total net revenue for 2025?",
+    "target_companies": ["JPMorgan Chase"],
+    "fact_type": "revenue",
+    "ground_truth": "182,447",
+    "expected_answerable": true,
+    "notes": "Consolidated financial highlights: 'Total net revenue | 182,447 | 177,556 | 158,104'. Managed-basis revenue (185,581) is a different measure."
+  },
+  {
+    "id": "Q26",
+    "bucket": "straightforward",
+    "query": "What was JPMorgan Chase's diluted earnings per share for 2025?",
+    "target_companies": ["JPMorgan Chase"],
+    "fact_type": "eps",
+    "ground_truth": "20.02",
+    "expected_answerable": true,
+    "notes": "Consolidated financial highlights: 'Diluted | 20.02 | 19.75 | 16.23' (net income per share)."
+  },
+  {
+    "id": "Q27",
+    "bucket": "straightforward",
+    "query": "How many employees did JPMorgan Chase have as of December 31, 2025?",
+    "target_companies": ["JPMorgan Chase"],
+    "fact_type": "employees",
+    "ground_truth": "318,512",
+    "expected_answerable": true,
+    "notes": "Human capital: 'As of December 31, 2025, JPMorganChase had 318,512 employees globally.'"
+  },
+  {
+    "id": "Q28",
+    "bucket": "straightforward",
+    "query": "What was JPMorgan Chase's total stockholders' equity at the end of 2025?",
+    "target_companies": ["JPMorgan Chase"],
+    "fact_type": "equity",
+    "ground_truth": "362,438",
+    "expected_answerable": true,
+    "notes": "Consolidated balance sheets: 'Total stockholders' equity | 362,438 | 344,758'."
+  },
+  {
+    "id": "Q29",
+    "bucket": "straightforward",
+    "query": "What was Microsoft's operating income for fiscal year 2026?",
+    "target_companies": ["Microsoft"],
+    "fact_type": "operating_income",
+    "ground_truth": "155,237",
+    "expected_answerable": true,
+    "notes": "MD&A summary: 'Operating income | 155,237 | 128,528 | 21%' (FY2026 | FY2025)."
+  },
+  {
+    "id": "Q30",
+    "bucket": "straightforward",
+    "query": "What was Microsoft's diluted earnings per share for fiscal year 2026?",
+    "target_companies": ["Microsoft"],
+    "fact_type": "eps",
+    "ground_truth": "17.95",
+    "expected_answerable": true,
+    "notes": "Income statements: 'Diluted | 17.95 | 13.64 | 11.80' (FY2026 | FY2025 | FY2024)."
+  },
+  {
+    "id": "Q31",
+    "bucket": "straightforward",
+    "query": "What were Microsoft's total assets as of June 30, 2026?",
+    "target_companies": ["Microsoft"],
+    "fact_type": "total_assets",
+    "ground_truth": "758,376",
+    "expected_answerable": true,
+    "notes": "Balance sheets: 'Total assets | 758,376 | 619,003' (June 30, 2026 | 2025)."
+  },
+  {
+    "id": "Q32",
+    "bucket": "straightforward",
+    "query": "How much did Microsoft spend on research and development in fiscal year 2026?",
+    "target_companies": ["Microsoft"],
+    "fact_type": "rnd",
+    "ground_truth": "35,562",
+    "expected_answerable": true,
+    "notes": "MD&A operating expenses: 'Research and development | 35,562 | 32,488 | 9%' (FY2026 | FY2025)."
+  },
+  {
+    "id": "Q33",
+    "bucket": "straightforward",
+    "query": "What was NVIDIA's operating income for fiscal year 2026?",
+    "target_companies": ["NVIDIA"],
+    "fact_type": "operating_income",
+    "ground_truth": "130,387",
+    "expected_answerable": true,
+    "notes": "Income statements: 'Operating income | 130,387 | 81,453 | 32,972' (FY2026 | FY2025 | FY2024)."
+  },
+  {
+    "id": "Q34",
+    "bucket": "straightforward",
+    "query": "What was NVIDIA's diluted net income per share for fiscal year 2026?",
+    "target_companies": ["NVIDIA"],
+    "fact_type": "eps",
+    "ground_truth": "4.90",
+    "expected_answerable": true,
+    "notes": "Income statements: 'Diluted | 4.90 | 2.94 | 1.19' (FY2026 | FY2025 | FY2024)."
+  },
+  {
+    "id": "Q35",
+    "bucket": "straightforward",
+    "query": "What were NVIDIA's total assets at the end of fiscal year 2026?",
+    "target_companies": ["NVIDIA"],
+    "fact_type": "total_assets",
+    "ground_truth": "206,803",
+    "expected_answerable": true,
+    "notes": "Balance sheets: 'Total assets | 206,803 | 111,601' (Jan 25, 2026 | Jan 26, 2025)."
+  },
+  {
+    "id": "Q36",
+    "bucket": "straightforward",
+    "query": "How many employees did NVIDIA have at the end of fiscal year 2026?",
+    "target_companies": ["NVIDIA"],
+    "fact_type": "employees",
+    "ground_truth": "42,000",
+    "expected_answerable": true,
+    "notes": "Human capital: 'As of the end of fiscal year 2026, we had approximately 42,000 employees in 38 countries'."
+  },
+  {
+    "id": "Q37",
+    "bucket": "straightforward",
+    "query": "What was Walmart's consolidated net income for fiscal year 2026?",
+    "target_companies": ["Walmart"],
+    "fact_type": "net_income",
+    "ground_truth": "22,270",
+    "expected_answerable": true,
+    "notes": "Consolidated statements of income: 'Consolidated net income | 22,270 | 20,157 | 16,270' (FY2026 | FY2025 | FY2024). Net income attributable to Walmart is lower (noncontrolling interest of 377)."
+  },
+  {
+    "id": "Q38",
+    "bucket": "straightforward",
+    "query": "What was Walmart's operating income for fiscal year 2026?",
+    "target_companies": ["Walmart"],
+    "fact_type": "operating_income",
+    "ground_truth": "29,825",
+    "expected_answerable": true,
+    "notes": "Consolidated results: 'Operating income | 29,825 | 29,348' (FY2026 | FY2025)."
+  },
+  {
+    "id": "Q39",
+    "bucket": "straightforward",
+    "query": "What were Walmart's total assets as of January 31, 2026?",
+    "target_companies": ["Walmart"],
+    "fact_type": "total_assets",
+    "ground_truth": "284,668",
+    "expected_answerable": true,
+    "notes": "Consolidated balance sheets: 'Total assets | 284,668 | 260,823' (Jan 31, 2026 | 2025)."
+  },
+  {
+    "id": "Q40",
+    "bucket": "straightforward",
+    "query": "What was Walmart's diluted net income per common share for fiscal year 2026?",
+    "target_companies": ["Walmart"],
+    "fact_type": "eps",
+    "ground_truth": "2.73",
+    "expected_answerable": true,
+    "notes": "Consolidated statements of income: 'Diluted net income per common share attributable to Walmart | 2.73 | 2.41 | 1.91'."
   }
 ]

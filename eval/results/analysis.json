@@ -1,0 +1,125 @@
+{
+  "straightforward": {
+    "accuracy": {
+      "plain_rag_k5": {
+        "questions": 14,
+        "accuracy": 0.5,
+        "ci95": [
+          0.214,
+          0.786
+        ]
+      },
+      "wide_rerank_k11": {
+        "questions": 13,
+        "accuracy": 0.615,
+        "ci95": [
+          0.385,
+          0.846
+        ]
+      },
+      "hybrid_single_pass": {
+        "questions": 13,
+        "accuracy": 1,
+        "ci95": [
+          1.0,
+          1.0
+        ]
+      },
+      "self_healing": {
+        "questions": 10,
+        "accuracy": 0.7,
+        "ci95": [
+          0.4,
+          1.0
+        ]
+      },
+      "self_healing_v2": {
+        "questions": 7,
+        "accuracy": 1,
+        "ci95": [
+          1.0,
+          1.0
+        ]
+      }
+    },
+    "mcnemar": [
+      {
+        "a": "plain_rag_k5",
+        "b": "self_healing",
+        "questions": 10,
+        "only_a": 0,
+        "only_b": 2,
+        "p_value": 0.5,
+        "p_holm": 1.0
+      },
+      {
+        "a": "wide_rerank_k11",
+        "b": "self_healing",
+        "questions": 10,
+        "only_a": 0,
+        "only_b": 1,
+        "p_value": 1.0,
+        "p_holm": 1.0
+      },
+      {
+        "a": "wide_rerank_k11",
+        "b": "hybrid_single_pass",
+        "questions": 13,
+        "only_a": 0,
+        "only_b": 5,
+        "p_value": 0.062,
+        "p_holm": 0.375
+      },
+      {
+        "a": "self_healing",
+        "b": "self_healing_v2",
+        "questions": 7,
+        "only_a": 0,
+        "only_b": 2,
+        "p_value": 0.5,
+        "p_holm": 1.0
+      },
+      {
+        "a": "hybrid_single_pass",
+        "b": "self_healing_v2",
+        "questions": 7,
+        "only_a": 0,
+        "only_b": 0,
+        "p_value": 1.0,
+        "p_holm": 1.0
+      },
+      {
+        "a": "plain_rag_k5",
+        "b": "self_healing_v2",
+        "questions": 7,
+        "only_a": 0,
+        "only_b": 3,
+        "p_value": 0.25,
+        "p_holm": 1.0
+      }
+    ],
+    "judge": {
+      "self_healing": {
+        "pass_correct": 19,
+        "pass_wrong": 5,
+        "fail_correct": 0,
+        "fail_wrong": 3,
+        "precision_of_pass": 0.792,
+        "wrong_answers_caught": 0.375
+      },
+      "self_healing_v2": {
+        "pass_correct": 7,
+        "pass_wrong": 0,
+        "fail_correct": 0,
+        "fail_wrong": 0,
+        "precision_of_pass": 1.0,
+        "wrong_answers_caught": null
+      }
+    }
+  },
+  "hard": {
+    "accuracy": {},
+    "mcnemar": [],
+    "judge": {}
+  }
+}
