@@ -352,10 +352,15 @@ pytest
 
 The suite covers answer matching, BM25 ranking, rank fusion, table parsing, company detection, deterministic ids, the healing policy and retry logic (v1 and v2), graph wiring, re-grading, and the statistics helpers. It makes no LLM or Qdrant calls.
 
+## Data & References
+
+- **Data source:** all five filings (Amazon, JPMorgan Chase, Microsoft, NVIDIA, Walmart) are official 10-K annual reports from [SEC EDGAR](https://www.sec.gov/edgar), the U.S. Securities and Exchange Commission's public filing database.
+- **Evaluation design:** the direct-lookup question style follows [FinanceBench](https://arxiv.org/abs/2311.11944) (Islam et al., 2023), a benchmark for RAG over real SEC filings.
+
 ## Acknowledgements
 
 - The LangGraph retrieve → generate → judge → retry structure began as a from-scratch reimplementation of [gurezende/SelfHealingRAG](https://github.com/gurezende/SelfHealingRAG) (MIT License) by Gustavo R. Santos, used as a learning reference.
-- The self-verification stage follows the Self-Verification Module described in *SH-RAG: Self-Healing Retrieval-Augmented Generation — A Self-Correcting RAG Framework for Large Language Models* (Kumawat, Jawdekar, Patsariya, Gupta). The paper's reinforcement-learning feedback loop is not implemented.
+- The self-verification stage follows the Self-Verification Module described in *SH-RAG: Self-Healing Retrieval-Augmented Generation — A Self-Correcting RAG Framework for Large Language Models* (Kumawat, Jawdekar, Patsariya, Gupta; PiCET 2025, IEEE), verified by entailment against the retrieved context rather than by external fact-checking. The paper's reinforcement-learning feedback loop is not implemented.
 - Contextual chunk headers follow the idea of Anthropic's [Contextual Retrieval](https://www.anthropic.com/news/contextual-retrieval) (here a deterministic metadata header rather than an LLM-generated one); fusion uses Reciprocal Rank Fusion (Cormack, Clarke & Büttcher, SIGIR 2009).
 - Additions in this repository: self-verification, Groq-hosted open-weight models, FastAPI service, Dockerized Qdrant, SEC-filing ingestion, the v2 retrieval and healing pipeline, and the FinanceBench-style evaluation set, harness and statistics.
 
