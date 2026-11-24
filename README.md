@@ -121,15 +121,29 @@ Each row adds one change; recall@k = the evidence facts are inside the top-k chu
 
 ### End-to-end results
 
-Original questions Q01–Q10 (v1 systems: 3 runs; v2: 1 run so far — the Groq free tier allows 200K tokens/day per model, so the remaining cells are queued and resume with `bash eval/run_all.sh`):
+Single-pass systems: all 40 questions (v1 systems 3 runs on Q01–Q10, 1 run elsewhere; v2 1 run; per-question majority). Loops: Q01–Q10 and Q21–Q30 so far — the Groq free tier allows 200K tokens/day per model and a loop costs 3–6 calls per question, so the remaining loop cells (Q31–Q40 and the hard bucket) are queued and resume with `bash eval/run_all.sh`.
+
+**30 straightforward questions**
 
 | | Plain RAG | Wide single pass | v1 loop | **v2 single pass** | **v2 loop** |
 |---|---:|---:|---:|---:|---:|
-| Correct | 15/30 (50%) | 18/30 (60%) | 19/27 (70%) | **10/10** | **7/7** (Q01–Q07) |
-| Mean LLM calls | 1 | 1 | 5.7 | 1 | 3.0 (no retries needed) |
-| Mean latency* | 1.6 s | 3.7 s | 46.8 s | 8.5 s | 20.2 s |
+| Correct | 15/30 (50%) | 17/30 (57%) | 14/20 (70%) | **29/30 (97%)** | **20/20 (100%)** |
+| 95% CI (bootstrap) | 33–67% | 40–73% | 50–90% | 90–100% | 100–100% |
+| Mean LLM calls | 1 | 1 | 5.4 | 1 | 3.0 (no retries needed) |
+| Silent failures† | — | — | 7 | — | 0 |
+| Mean latency* | 4.3 s | 9.0 s | 45.3 s | 13.5 s | 27.3 s |
 
-\*Groq free tier; includes rate-limit back-off. v2 single-pass latency is dominated by reranking 30 candidates on CPU.
+**10 hard questions** (multi-company comparisons, computed margins, fiscal-year ends)
+
+| | Wide single pass | **v2 single pass** |
+|---|---:|---:|
+| Correct | 3/10 (30%) | **7/10 (70%)** |
+
+†Wrong final answer that the loop's judge passed. \*Groq free tier, includes rate-limit back-off; v2 single-pass latency is dominated by reranking 30 candidates on CPU.
+
+**How v2 fails.** All four v2 single-pass misses are retrieval misses (the evidence is not in the top 8; confirmed by the ablation's per-question ranks), and three of the four are *abstentions* ("I didn't find any relevant documents") rather than wrong numbers: Q31 (Microsoft total assets), Q11 and Q14 (two-company comparisons). The fourth, Q13, summed two Walmart segments instead of quoting total revenue. v1 fails the other way — it answers confidently from the wrong table. An abstention is the failure a self-healing loop can act on (it routes to `missing_context` → widen), which is what the pending hard-bucket loop runs will test.
+
+Original questions, per question:
 
 | Question | Plain | Wide | v1 loop | v2 single pass | What changed |
 |---|:-:|:-:|:-:|:-:|---|
@@ -141,37 +155,42 @@ Original questions Q01–Q10 (v1 systems: 3 runs; v2: 1 run so far — the Groq 
 | Q09 Amazon segments | ✓ | ✗ | ✓ | ✓ | v1 wide pass answered with Microsoft's segments; company headers / filter prevent it |
 | Q10 JPMorgan total assets | ✗ | ✗ | ✗ | ✓ | v1 picked the segment table; v2 the firm-wide figure |
 
-On the 20 added questions only a few cells ran before the daily limit (v2 single pass 3/3, plain 2/4, wide 2/3); they are excluded from the headline until complete.
-
 ### Statistics
 
-`python eval/analysis.py` (exact McNemar on per-question majority outcomes, Holm-adjusted across the 6 comparisons; 95% bootstrap CIs over questions):
+`python eval/analysis.py` (exact McNemar on per-question majority outcomes over the questions both systems answered, Holm-adjusted across the 6 straightforward comparisons; 95% bootstrap CIs over questions):
 
-| Comparison (Q01–Q10) | Discordant (A only / B only) | p | p (Holm) |
-|---|---:|---:|---:|
-| wide single pass vs v2 single pass | 0 / 5 | 0.062 | 0.375 |
-| plain RAG vs v1 loop | 0 / 2 | 0.50 | 1.0 |
-| wide single pass vs v1 loop | 0 / 1 | 1.0 | 1.0 |
+| Comparison | Questions | Discordant (A only / B only) | p | p (Holm) |
+|---|---:|---:|---:|---:|
+| **wide single pass vs v2 single pass** | 30 | 0 / 12 | <0.001 | **0.003** |
+| **plain RAG vs v2 loop** | 20 | 0 / 9 | 0.004 | **0.020** |
+| v1 loop vs v2 loop | 20 | 0 / 6 | 0.031 | 0.125 |
+| plain RAG vs v1 loop | 20 | 0 / 3 | 0.25 | 0.75 |
+| wide single pass vs v1 loop | 20 | 0 / 3 | 0.25 | 0.75 |
+| v2 single pass vs v2 loop | 20 | 0 / 0 | 1.0 | 1.0 |
+| hard: wide vs v2 single pass | 10 | 1 / 5 | 0.22 | 0.22 (separate family) |
 
-- **v2 never lost a question that v1 got right**, but with 10 questions even a 5–0 split is not significant at 0.05. The 20 added questions exist to fix exactly this.
-- **Judge calibration (v1 loop, 27 final answers):** P(correct | judge passed) = 0.79; the judge flagged only 3 of 8 wrong answers (37.5%). A self-healing loop can only repair what its judge catches, so this recall caps its benefit.
+- **v2 retrieval is a significant improvement**: on 30 questions the v2 single pass fixed 12 questions the v1 wide pass got wrong and broke none (Holm p = 0.003). On the original 10 questions alone the same comparison was 5–0, p = 0.062 — not significant, which is why the question set was extended.
+- **The v1 loop's gain over a single pass is not significant** (3–0, p = 0.25): most of what the loop bought was a wider context, which the wide single pass gets with one call.
+- **The v2 loop adds nothing over the v2 single pass on straightforward questions** (0–0, zero retries): once retrieval is right, there is nothing to heal.
+- **Judge calibration (v1 loop, 37 final answers):** P(correct | judge passed) = 0.79; the judge flagged only 4 of 11 wrong answers (36%). A self-healing loop can only repair what its judge catches, so this recall caps its benefit.
 
 ### Findings
 
-- **Retrieval was the bottleneck, not the loop.** v1's loop beat plain RAG mainly by retrieving more; a wide single pass got most of the gain at 1/6 of the LLM calls. Fixing retrieval (v2) moved recall@5 from 50% to 97% on 30 questions and the single pass to 10/10 — and the v2 loop then needed zero retries on the questions it ran. The loop becomes a safety net rather than the main mechanism.
+- **Retrieval was the bottleneck, not the loop.** v1's loop beat plain RAG mainly by retrieving more; a wide single pass got most of the gain at 1/6 of the LLM calls. Fixing retrieval (v2) moved recall@5 from 50% to 97% on 30 questions and end-to-end accuracy from 57% to 97% (12–0 on discordant questions, Holm p = 0.003) — and the v2 loop then needed zero retries on the 20 questions it ran. The loop becomes a safety net rather than the main mechanism.
 - **A change can hurt one component and help the system.** Table-aware parsing + chunk headers made *dense-only* recall@5 worse (50% → 43%): pipe-separated rows embed less naturally. But the same chunks made BM25 strong (80%) and hybrid + rerank best (97%). Without an ablation you would have reverted a change that is essential to the final system.
 - **Exact tokens need sparse retrieval.** BM25 alone beats dense alone (R@5 80% vs 43% on v2 chunks): financial questions hinge on exact line items and numbers that embeddings blur. Naive RRF fusion is slightly *worse* than BM25 alone here (77% vs 80%): the weaker dense ranking dilutes it. Reranking the fused pool fixes that (97%, MRR 0.47 → 0.84) — fusion buys recall, the cross-encoder buys precision.
 - **Headers fixed entity confusion; the filter is a guarantee, decomposition is the win.** Entity precision@5 was already 95% for v1 and 100% with headers, so the filter adds nothing on single-company questions — but it enables per-company decomposition, which lifted multi-company recall@11 from 30% to 80%.
-- **The judge is the ceiling of a self-healing loop.** v1's judge passed 5 wrong answers (precision 0.79) and caught only 3 of 8 wrong ones. Q05 (segment sum) and Q10 (segment assets) were passed with high scores. Reasoning errors were fixed by grounded prompt rules, not by more retrieval — v2 quotes $57,048M.
+- **The judge is the ceiling of a self-healing loop.** v1's judge passed 7 wrong answers (precision 0.79) and caught only 4 of 11 wrong ones. Q05 (segment sum) and Q10 (segment assets) were passed with high scores. Reasoning errors were fixed by grounded prompt rules, not by more retrieval — v2 quotes $57,048M.
 - **Audit the evaluation, not just the model.** Two eval bugs changed conclusions: a scorer that split numbers on commas, and a Q10 label that was a segment figure. After the fix v1 numbers dropped 10 points — the honest baseline is what makes the v2 improvement credible.
-- **Claims must match sample size.** On 10 questions, v2 single pass vs wide pass is 5–0 on discordant questions: McNemar p = 0.062, Holm-adjusted 0.375. Directionally strong, not significant — hence 40 verified questions.
+- **Claims must match sample size.** On 10 questions, v2 single pass vs wide pass was 5–0 on discordant questions: McNemar p = 0.062, Holm-adjusted 0.375 — directionally strong, not significant. Extending to 30 verified questions made it 12–0, Holm p = 0.003. The v1 loop's 3–0 edge over the wide pass on 20 questions is still not significant (p = 0.25).
+- **Fail closed, not silently.** When v2 retrieval misses, the grounded prompt makes it abstain (3 of 4 misses) instead of quoting a nearby wrong number; v1 produced 7 confident wrong answers its judge passed. An abstention is a signal a healing loop can act on; a silent failure is not.
 
 
 ### Limitations
 
 - Small question set (30 + 10) written by the author after reading the corpus; v2's prompt rules were motivated by observed v1 failures. A held-out set is needed to claim generalisation.
 - v1 vs v2 end-to-end comparisons change several components at once; only the retrieval ablation isolates single changes.
-- LLM outputs vary between runs; v2 has fewer runs than v1 so far (daily token limit).
+- LLM outputs vary between runs; v2 has fewer runs than v1 so far, and the loops have not yet run on Q31–Q40 or the hard bucket (daily token limit).
 - Company detection is a regex alias registry for the five companies in the corpus.
 - The verifier and judge share a model family with the generator and can share its blind spots.
 - BM25 is an in-memory index rebuilt per process; at scale it belongs in the vector store (sparse vectors) or a search engine.

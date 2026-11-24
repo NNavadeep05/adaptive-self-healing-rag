@@ -445,11 +445,17 @@
         "error": null
       },
       "self_healing_v2": {
-        "correct": null,
-        "answer": null,
-        "llm_calls": null,
-        "seconds": 9.67,
-        "error": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-20b` in organization `org_[redacted]` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 198097, Requested 2623. Please try again in 5m11.039999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+        "correct": true,
+        "answer": "Walmart reported that its workforce was **approximately 2.1 million associates worldwide** at the end of fiscal year 2026【Document 1】.",
+        "llm_calls": 3,
+        "seconds": 18.23,
+        "error": null,
+        "retry_count": 0,
+        "judge_score": 0.95,
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": []
       }
     }
   },
@@ -493,6 +499,19 @@
         "llm_calls": 1,
         "seconds": 6.49,
         "error": null
+      },
+      "self_healing_v2": {
+        "correct": true,
+        "answer": "Amazon’s 2025 Form 10‑K states that it “has organized its operations into three segments: **North America, International, and AWS**”【Document 1†L1-L3】【Document 4†L1-L4】. These are the three reportable segments disclosed in the filing.",
+        "llm_calls": 3,
+        "seconds": 9.43,
+        "error": null,
+        "retry_count": 0,
+        "judge_score": 0.95,
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": []
       }
     }
   },
@@ -539,6 +558,19 @@
         "llm_calls": 1,
         "seconds": 7.54,
         "error": null
+      },
+      "self_healing_v2": {
+        "correct": true,
+        "answer": "JPMorgan Chase reported **total firm assets of $4,424,900 million** as of December 31, 2025【Document 1†L30-L33】.",
+        "llm_calls": 3,
+        "seconds": 30.65,
+        "error": null,
+        "retry_count": 0,
+        "judge_score": 0.95,
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": []
       }
     }
   },
@@ -569,18 +601,30 @@
         "error": null
       },
       "self_healing_v2": {
-        "correct": null,
-        "answer": null,
-        "llm_calls": null,
-        "seconds": 13.75,
-        "error": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_[redacted]` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199529, Requested 2375. Please try again in 13m42.528s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+        "correct": true,
+        "answer": "Amazon reported net income of **$77,670 million** for the year ended December 31, 2025【Document 2†L1-L4】.",
+        "llm_calls": 3,
+        "seconds": 16.16,
+        "error": null,
+        "retry_count": 0,
+        "judge_score": 0.95,
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": []
       },
       "self_healing": {
-        "correct": null,
-        "answer": null,
-        "llm_calls": null,
-        "seconds": 0.95,
-        "error": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_[redacted]` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199527, Requested 1221. Please try again in 5m23.135999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+        "correct": true,
+        "answer": "Amazon reported a net income of **$77,670 million** for the year ended December 31, 2025 (approximately $77.7 billion).【Document 2】",
+        "llm_calls": 3,
+        "seconds": 6.22,
+        "error": null,
+        "retry_count": 0,
+        "judge_score": 0.95,
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": []
       }
     }
   },
@@ -609,6 +653,36 @@
         "llm_calls": 1,
         "seconds": 17.79,
         "error": null
+      },
+      "self_healing_v2": {
+        "correct": true,
+        "answer": "Amazon’s total assets at year‑end 2025 were **$818,042 million**【Document 1】.",
+        "llm_calls": 3,
+        "seconds": 30.9,
+        "error": null,
+        "retry_count": 0,
+        "judge_score": 0.95,
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": []
+      },
+      "self_healing": {
+        "correct": true,
+        "answer": "Amazon’s total assets as of December 31, 2025 were **$818,042 million**【Document 1】.",
+        "llm_calls": 12,
+        "seconds": 128.96,
+        "error": null,
+        "retry_count": 3,
+        "judge_score": 0.95,
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": [
+          "Unsupported claims → enabled reranking + increased retrieval budget by 2",
+          "Irrelevant docs → increased retrieval budget by 2 + enabled reranking",
+          "Missing context → increased retrieval budget by 3 + enabled reranking"
+        ]
       }
     }
   },
@@ -637,6 +711,32 @@
         "llm_calls": 1,
         "seconds": 15.33,
         "error": null
+      },
+      "self_healing_v2": {
+        "correct": true,
+        "answer": "Amazon reported diluted earnings per share of **$7.17 per diluted share** for the year ended December 31, 2025【Document 1】.",
+        "llm_calls": 3,
+        "seconds": 34.53,
+        "error": null,
+        "retry_count": 0,
+        "judge_score": 0.95,
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": []
+      },
+      "self_healing": {
+        "correct": true,
+        "answer": "Amazon’s diluted earnings per share for 2025 was **$7.17**.",
+        "llm_calls": 3,
+        "seconds": 24.73,
+        "error": null,
+        "retry_count": 0,
+        "judge_score": 1,
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": []
       }
     }
   },
@@ -653,18 +753,44 @@
         "error": null
       },
       "wide_rerank_k11": {
-        "correct": null,
-        "answer": null,
+        "correct": false,
+        "answer": "Amazon reported **$90,106 million** in cash, cash equivalents, and restricted cash as of December 31, 2025 (i.e., about **$90.1 billion**).【Document 1】",
         "llm_calls": 1,
-        "seconds": 2.62,
-        "error": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_[redacted]` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199641, Requested 2484. Please try again in 15m18s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+        "seconds": 7.12,
+        "error": null
       },
       "hybrid_single_pass": {
-        "correct": null,
-        "answer": null,
+        "correct": true,
+        "answer": "Amazon reported **$86,810 million** in cash and cash equivalents as of December 31, 2025【Document 1】.",
         "llm_calls": 1,
-        "seconds": 6.2,
-        "error": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_[redacted]` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199627, Requested 2226. Please try again in 13m20.496s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+        "seconds": 10.42,
+        "error": null
+      },
+      "self_healing_v2": {
+        "correct": true,
+        "answer": "Amazon reported **$86,810 million** in cash and cash equivalents as of December 31, 2025.【Document 1】",
+        "llm_calls": 3,
+        "seconds": 35.31,
+        "error": null,
+        "retry_count": 0,
+        "judge_score": 0.95,
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": []
+      },
+      "self_healing": {
+        "correct": false,
+        "answer": "Amazon reported **$90,106 million** in cash, cash equivalents, and restricted cash at the end of the period on December 31, 2025【Document 1†L1-L4】.",
+        "llm_calls": 3,
+        "seconds": 27.23,
+        "error": null,
+        "retry_count": 0,
+        "judge_score": 0.95,
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": true,
+        "healing_trace": []
       }
     }
   },
@@ -674,11 +800,619 @@
     "query": "What was JPMorgan Chase's reported total net revenue for 2025?",
     "systems": {
       "plain_rag_k5": {
+        "correct": true,
+        "answer": "JPMorgan Chase reported **total net revenue of $182,447 million for 2025**.【Document 2】",
+        "llm_calls": 1,
+        "seconds": 1.33,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": true,
+        "answer": "JPMorgan Chase reported **total net revenue of $182,447 million** for the year ended December 31, 2025. 【Document 3】",
+        "llm_calls": 1,
+        "seconds": 5.36,
+        "error": null
+      },
+      "hybrid_single_pass": {
+        "correct": true,
+        "answer": "JPMorgan Chase reported **total net revenue of $182.4 billion for 2025**【Document 1】. (The filing also presents this figure as $182,447 million in the consolidated financial tables【Document 2】【Document 8】.)",
+        "llm_calls": 1,
+        "seconds": 10.62,
+        "error": null
+      },
+      "self_healing_v2": {
+        "correct": true,
+        "answer": "JPMorgan Chase reported **total net revenue of $182.4 billion for 2025**【Document 1†L1-L4】.  (The filing also presents the same amount as **$182,447 million** in the consolidated financial highlights【Document 2†L9-L12】.)",
+        "llm_calls": 3,
+        "seconds": 38.68,
+        "error": null,
+        "retry_count": 0,
+        "judge_score": 0.95,
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": []
+      },
+      "self_healing": {
+        "correct": true,
+        "answer": "JPMorgan Chase reported **total net revenue of $182,447 million for 2025**【Document 2】.",
+        "llm_calls": 3,
+        "seconds": 21.81,
+        "error": null,
+        "retry_count": 0,
+        "judge_score": 0.95,
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": []
+      }
+    }
+  },
+  {
+    "run": 1,
+    "id": "Q26",
+    "query": "What was JPMorgan Chase's diluted earnings per share for 2025?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": true,
+        "answer": "JPMorgan Chase reported diluted earnings per share of **$20.02** for 2025【Document 2】.",
+        "llm_calls": 1,
+        "seconds": 1.05,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": true,
+        "answer": "JPMorgan Chase’s diluted earnings per share for 2025 was **$20.02**【Document 1】.",
+        "llm_calls": 1,
+        "seconds": 18.28,
+        "error": null
+      },
+      "hybrid_single_pass": {
+        "correct": true,
+        "answer": "JPMorgan Chase reported diluted earnings per share of **$20.02** for 2025【Document 3†L1-L4】【Document 7†L1-L4】.",
+        "llm_calls": 1,
+        "seconds": 17.01,
+        "error": null
+      },
+      "self_healing_v2": {
+        "correct": true,
+        "answer": "JPMorgan Chase reported diluted earnings per share of **$20.02** for 2025【Document 3†L1-L3】【Document 7†L9-L11】.",
+        "llm_calls": 3,
+        "seconds": 40.61,
+        "error": null,
+        "retry_count": 0,
+        "judge_score": 0.95,
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": []
+      },
+      "self_healing": {
+        "correct": true,
+        "answer": "JPMorgan Chase’s diluted earnings per share for 2025 were **$20.02**【Document 2】.",
+        "llm_calls": 3,
+        "seconds": 24.58,
+        "error": null,
+        "retry_count": 0,
+        "judge_score": 0.95,
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": []
+      }
+    }
+  },
+  {
+    "run": 1,
+    "id": "Q27",
+    "query": "How many employees did JPMorgan Chase have as of December 31, 2025?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": false,
+        "answer": "I didn't find any relevant documents.",
+        "llm_calls": 1,
+        "seconds": 6.12,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": false,
+        "answer": "I didn't find any relevant documents.",
+        "llm_calls": 1,
+        "seconds": 14.86,
+        "error": null
+      },
+      "hybrid_single_pass": {
+        "correct": true,
+        "answer": "JPMorgan Chase reported that **it had 318,512 employees globally as of December 31, 2025**【Document 1†L1-L3】.",
+        "llm_calls": 1,
+        "seconds": 13.94,
+        "error": null
+      },
+      "self_healing_v2": {
+        "correct": true,
+        "answer": "JPMorgan Chase reported that **as of December 31 2025 it had 318,512 employees** globally【Document 1】.",
+        "llm_calls": 3,
+        "seconds": 32.11,
+        "error": null,
+        "retry_count": 0,
+        "judge_score": 0.95,
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": []
+      },
+      "self_healing": {
+        "correct": false,
+        "answer": "I didn't find any relevant documents.",
+        "llm_calls": 12,
+        "seconds": 121.37,
+        "error": null,
+        "retry_count": 3,
+        "judge_score": 0.1,
+        "failure_reason": "missing_context",
+        "judge_passed": false,
+        "silent_failure": false,
+        "healing_trace": [
+          "Irrelevant docs → increased retrieval budget by 2 + enabled reranking",
+          "Unsupported claims → enabled reranking + increased retrieval budget by 2",
+          "Unsupported claims → enabled reranking + increased retrieval budget by 2"
+        ]
+      }
+    }
+  },
+  {
+    "run": 1,
+    "id": "Q28",
+    "query": "What was JPMorgan Chase's total stockholders' equity at the end of 2025?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": true,
+        "answer": "JPMorgan Chase reported total stockholders’ equity of **$362,438 million** (about **$362.4 billion**) at the end of 2025【Document 2】.",
+        "llm_calls": 1,
+        "seconds": 7.8,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": true,
+        "answer": "JPMorgan Chase reported total stockholders’ equity of **$362,438 million** at the end of 2025【Document 1】.",
+        "llm_calls": 1,
+        "seconds": 15.89,
+        "error": null
+      },
+      "hybrid_single_pass": {
+        "correct": true,
+        "answer": "JPMorgan Chase reported **total stockholders’ equity of $362,438 million** at the end of 2025【Document 2†L9-L12】.",
+        "llm_calls": 1,
+        "seconds": 19.35,
+        "error": null
+      },
+      "self_healing_v2": {
+        "correct": true,
+        "answer": "JPMorgan Chase’s total stockholders’ equity at December 31 2025 was **$362,438 million**【Document 2†L9-L12】.",
+        "llm_calls": 3,
+        "seconds": 39.73,
+        "error": null,
+        "retry_count": 0,
+        "judge_score": 0.95,
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": []
+      },
+      "self_healing": {
+        "correct": true,
+        "answer": "JPMorgan Chase’s total stockholders’ equity at the end of 2025 was **$362,438 million** (approximately $362.4 billion).",
+        "llm_calls": 3,
+        "seconds": 20.38,
+        "error": null,
+        "retry_count": 0,
+        "judge_score": 0.95,
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": []
+      }
+    }
+  },
+  {
+    "run": 1,
+    "id": "Q29",
+    "query": "What was Microsoft's operating income for fiscal year 2026?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": false,
+        "answer": "Microsoft’s operating income for fiscal year 2026 was **$130.387 billion** (reported as $130,387 million).【Document 1】",
+        "llm_calls": 1,
+        "seconds": 7.91,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": false,
+        "answer": "Microsoft’s operating income for fiscal year 2026 was **$130,387 million** (approximately $130.4 billion)【Document 5】.",
+        "llm_calls": 1,
+        "seconds": 15.57,
+        "error": null
+      },
+      "hybrid_single_pass": {
+        "correct": true,
+        "answer": "Microsoft reported **operating income of $155,237 million for fiscal year 2026**【Document 2】.",
+        "llm_calls": 1,
+        "seconds": 17.59,
+        "error": null
+      },
+      "self_healing_v2": {
+        "correct": true,
+        "answer": "Microsoft reported **operating income of $155,237 million** for fiscal year 2026【Document 2†L1-L4】.",
+        "llm_calls": 3,
+        "seconds": 37.95,
+        "error": null,
+        "retry_count": 0,
+        "judge_score": 0.95,
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": []
+      },
+      "self_healing": {
+        "correct": false,
+        "answer": "Microsoft’s operating income for fiscal year 2026 was **$130.387 billion**【Document 1】.",
+        "llm_calls": 3,
+        "seconds": 18.49,
+        "error": null,
+        "retry_count": 0,
+        "judge_score": 0.95,
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": true,
+        "healing_trace": []
+      }
+    }
+  },
+  {
+    "run": 1,
+    "id": "Q30",
+    "query": "What was Microsoft's diluted earnings per share for fiscal year 2026?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": true,
+        "answer": "Microsoft’s diluted earnings per share for fiscal year 2026 can be calculated from the data in **Document 2**:\n\n- Net income available for common shareholders (A): **$133,749 million**\n- Weighted‑average shares of common stock (B): **7,429 million**\n- Dilutive effect of stock‑based awards: **24 million**  \n\nDiluted shares = 7,429 + 24 = **7,453 million**  \n\nDiluted EPS = $133,749 million ÷ 7,453 million ≈ **$17.95 per share**.",
+        "llm_calls": 1,
+        "seconds": 7.23,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": false,
+        "answer": "Microsoft reported diluted earnings per share of **$4.90** for fiscal year 2026. 【Document 3】",
+        "llm_calls": 1,
+        "seconds": 18.61,
+        "error": null
+      },
+      "hybrid_single_pass": {
+        "correct": true,
+        "answer": "Microsoft reported diluted earnings per share of **$17.95** for fiscal year 2026【Document 2】.",
+        "llm_calls": 1,
+        "seconds": 15.97,
+        "error": null
+      },
+      "self_healing_v2": {
+        "correct": true,
+        "answer": "Microsoft reported diluted earnings per share of **$17.95** for fiscal year 2026【Document 2†L9-L11】【Document 3†L15-L18】.",
+        "llm_calls": 3,
+        "seconds": 39.9,
+        "error": null,
+        "retry_count": 0,
+        "judge_score": 0.95,
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": []
+      },
+      "self_healing": {
+        "correct": true,
+        "answer": "Microsoft’s diluted earnings per share (EPS) for fiscal year 2026 was approximately **$17.95 per share**. This is derived from the net income available to common shareholders ($133,749 million) divided by the diluted share count (weighted‑average common shares 7,429 million + dilutive effect of stock‑based awards 24 million = 7,453 million shares).",
+        "llm_calls": 3,
+        "seconds": 20.8,
+        "error": null,
+        "retry_count": 0,
+        "judge_score": 0.9,
+        "failure_reason": "none",
+        "judge_passed": true,
+        "silent_failure": false,
+        "healing_trace": []
+      }
+    }
+  },
+  {
+    "run": 1,
+    "id": "Q31",
+    "query": "What were Microsoft's total assets as of June 30, 2026?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": false,
+        "answer": "Microsoft’s total assets as of June 30 2026 were **$475,513 million**【Document 4】.",
+        "llm_calls": 1,
+        "seconds": 9.85,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": false,
+        "answer": "Microsoft reported total assets of **$475,513 million** (approximately $475.5 billion) as of June 30, 2026【Document 8】.",
+        "llm_calls": 1,
+        "seconds": 17.64,
+        "error": null
+      },
+      "hybrid_single_pass": {
+        "correct": false,
+        "answer": "I didn't find any relevant documents.",
+        "llm_calls": 1,
+        "seconds": 17.67,
+        "error": null
+      },
+      "self_healing_v2": {
         "correct": null,
         "answer": null,
+        "llm_calls": null,
+        "seconds": 47.87,
+        "error": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_[redacted]` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 198947, Requested 2830. Please try again in 12m47.664s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_excee"
+      },
+      "self_healing": {
+        "correct": null,
+        "answer": null,
+        "llm_calls": null,
+        "seconds": 0.93,
+        "error": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_[redacted]` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 198944, Requested 1616. Please try again in 4m1.92s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded"
+      }
+    }
+  },
+  {
+    "run": 1,
+    "id": "Q32",
+    "query": "How much did Microsoft spend on research and development in fiscal year 2026?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": false,
+        "answer": "Microsoft’s research and development expense for fiscal year 2026 was **$18,497 million** (about $18.5 billion).【Document 3】",
         "llm_calls": 1,
-        "seconds": 0.49,
-        "error": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_[redacted]` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199626, Requested 1223. Please try again in 6m6.768s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+        "seconds": 10.3,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": true,
+        "answer": "Microsoft’s research and development expense for fiscal year 2026 was **$35,562 million** (approximately **$35.6 billion**)【Document 2】.",
+        "llm_calls": 1,
+        "seconds": 14.49,
+        "error": null
+      },
+      "hybrid_single_pass": {
+        "correct": true,
+        "answer": "Microsoft reported research and development expenses of **$35,562 million** for fiscal year 2026【Document 1】.",
+        "llm_calls": 1,
+        "seconds": 12.33,
+        "error": null
+      }
+    }
+  },
+  {
+    "run": 1,
+    "id": "Q33",
+    "query": "What was NVIDIA's operating income for fiscal year 2026?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": true,
+        "answer": "NVIDIA reported **operating income of $130,387 million** for the fiscal year ended January 25, 2026【Document 2†L13-L17】.",
+        "llm_calls": 1,
+        "seconds": 9.6,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": true,
+        "answer": "NVIDIA reported **operating income of $130,387 million** for fiscal year 2026 (the year ended January 25, 2026)【Document 3†L15-L21】.",
+        "llm_calls": 1,
+        "seconds": 21.27,
+        "error": null
+      },
+      "hybrid_single_pass": {
+        "correct": true,
+        "answer": "NVIDIA reported **operating income of $130,387 million** for fiscal year 2026【Document 3】.",
+        "llm_calls": 1,
+        "seconds": 12.89,
+        "error": null
+      }
+    }
+  },
+  {
+    "run": 1,
+    "id": "Q34",
+    "query": "What was NVIDIA's diluted net income per share for fiscal year 2026?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": true,
+        "answer": "NVIDIA reported diluted net income of **$4.90 per share** for fiscal year 2026【Document 1】.",
+        "llm_calls": 1,
+        "seconds": 12.58,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": true,
+        "answer": "NVIDIA reported diluted net income of **$4.90 per share** for fiscal year 2026.【Document 1】",
+        "llm_calls": 1,
+        "seconds": 21.57,
+        "error": null
+      },
+      "hybrid_single_pass": {
+        "correct": true,
+        "answer": "NVIDIA reported diluted net income per share of **$4.90** for fiscal year 2026【Document 2†L1-L3】.",
+        "llm_calls": 1,
+        "seconds": 18.5,
+        "error": null
+      }
+    }
+  },
+  {
+    "run": 1,
+    "id": "Q35",
+    "query": "What were NVIDIA's total assets at the end of fiscal year 2026?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": false,
+        "answer": "I didn't find any relevant documents.",
+        "llm_calls": 1,
+        "seconds": 10.65,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": false,
+        "answer": "I didn't find any relevant documents.",
+        "llm_calls": 1,
+        "seconds": 18.43,
+        "error": null
+      },
+      "hybrid_single_pass": {
+        "correct": true,
+        "answer": "NVIDIA reported **total assets of $206,803 million** at the end of fiscal year 2026. 【Document 1】",
+        "llm_calls": 1,
+        "seconds": 18.06,
+        "error": null
+      }
+    }
+  },
+  {
+    "run": 1,
+    "id": "Q36",
+    "query": "How many employees did NVIDIA have at the end of fiscal year 2026?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": false,
+        "answer": "I didn't find any relevant documents.",
+        "llm_calls": 1,
+        "seconds": 9.55,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": false,
+        "answer": "I didn't find any relevant documents.",
+        "llm_calls": 1,
+        "seconds": 18.42,
+        "error": null
+      },
+      "hybrid_single_pass": {
+        "correct": true,
+        "answer": "NVIDIA reported that **it had approximately 42,000 employees** at the end of fiscal year 2026.【Document 1】",
+        "llm_calls": 1,
+        "seconds": 12.42,
+        "error": null
+      }
+    }
+  },
+  {
+    "run": 1,
+    "id": "Q37",
+    "query": "What was Walmart's consolidated net income for fiscal year 2026?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": true,
+        "answer": "Walmart’s consolidated net income for fiscal year 2026 was **$22,270 million** (approximately $22.3 billion).【Document 2】",
+        "llm_calls": 1,
+        "seconds": 11.63,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": true,
+        "answer": "Walmart reported consolidated net income of **$22,270 million** (about $22.3 billion) for fiscal year 2026【Document 2†L9-L12】【Document 11†L22-L25】.",
+        "llm_calls": 1,
+        "seconds": 22.86,
+        "error": null
+      },
+      "hybrid_single_pass": {
+        "correct": true,
+        "answer": "Walmart reported **consolidated net income of $22,270 million** for fiscal year 2026【Document 1†L9-L12】.",
+        "llm_calls": 1,
+        "seconds": 18.68,
+        "error": null
+      }
+    }
+  },
+  {
+    "run": 1,
+    "id": "Q38",
+    "query": "What was Walmart's operating income for fiscal year 2026?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": false,
+        "answer": "I didn't find any relevant documents.",
+        "llm_calls": 1,
+        "seconds": 11.93,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": false,
+        "answer": "I didn't find any relevant documents.",
+        "llm_calls": 1,
+        "seconds": 19.0,
+        "error": null
+      },
+      "hybrid_single_pass": {
+        "correct": true,
+        "answer": "Walmart reported **operating income of $29,825 million for fiscal year 2026**【Document 5†L1-L4】.",
+        "llm_calls": 1,
+        "seconds": 20.36,
+        "error": null
+      }
+    }
+  },
+  {
+    "run": 1,
+    "id": "Q39",
+    "query": "What were Walmart's total assets as of January 31, 2026?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": false,
+        "answer": "I didn't find any relevant documents.",
+        "llm_calls": 1,
+        "seconds": 10.51,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": true,
+        "answer": "Walmart’s consolidated total assets as of January 31 2026 were **$284,668 million**【Document 10】.",
+        "llm_calls": 1,
+        "seconds": 20.52,
+        "error": null
+      },
+      "hybrid_single_pass": {
+        "correct": true,
+        "answer": "Walmart’s consolidated total assets as of January 31, 2026 were **$284,668 million**【Document 2†L1-L3】.",
+        "llm_calls": 1,
+        "seconds": 16.11,
+        "error": null
+      }
+    }
+  },
+  {
+    "run": 1,
+    "id": "Q40",
+    "query": "What was Walmart's diluted net income per common share for fiscal year 2026?",
+    "systems": {
+      "plain_rag_k5": {
+        "correct": true,
+        "answer": "Walmart’s diluted net income per common share for fiscal year 2026 was **$2.73**【Document 2】.",
+        "llm_calls": 1,
+        "seconds": 10.01,
+        "error": null
+      },
+      "wide_rerank_k11": {
+        "correct": true,
+        "answer": "Walmart’s diluted net income per common share for fiscal year 2026 was **$2.73**【Document 1】.",
+        "llm_calls": 1,
+        "seconds": 23.28,
+        "error": null
+      },
+      "hybrid_single_pass": {
+        "correct": true,
+        "answer": "Walmart’s diluted net income per common share for fiscal year 2026 was **$2.73**【Document 1†L1-L3】【Document 3†L7-L9】.",
+        "llm_calls": 1,
+        "seconds": 18.81,
+        "error": null
       }
     }
   },

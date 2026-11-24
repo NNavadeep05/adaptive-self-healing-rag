@@ -5,32 +5,221 @@
     "query": "What was Microsoft's FY2026 revenue compared with NVIDIA's FY2026 revenue?",
     "systems": {
       "wide_rerank_k11": {
-        "correct": null,
-        "answer": null,
+        "correct": true,
+        "answer": "**Microsoft FY 2026 revenue**\n\n- Document 6 (Microsoft’s FY 2026 consolidated revenue table) shows total revenue of **$331,839 million** for the year ended June 30, 2026【Document 6】.\n\n**NVIDIA FY 2026 revenue**\n\n- Document 5 (NVIDIA’s consolidated statements of income) reports revenue of **$215,938 million** for the year ended Jan 25, 2026【Document 5】.\n\n**Comparison**\n\n- Microsoft’s FY 2026 revenue of **$331.8 billion** is roughly **$116 billion higher** than NVIDIA’s FY 2026 revenue of **$215.9 billion**, representing about a **52 % larger** revenue base for Microsoft.",
         "llm_calls": 1,
-        "seconds": 5.0,
-        "error": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_[redacted]` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199603, Requested 2344. Please try again in 14m1.104s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+        "seconds": 7.82,
+        "error": null
       },
       "hybrid_single_pass": {
-        "correct": null,
-        "answer": null,
+        "correct": false,
+        "answer": "I didn't find any relevant documents.",
         "llm_calls": 1,
-        "seconds": 13.72,
-        "error": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_[redacted]` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199572, Requested 2037. Please try again in 11m35.088s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+        "seconds": 17.7,
+        "error": null
       },
       "self_healing_v2": {
         "correct": null,
         "answer": null,
         "llm_calls": null,
-        "seconds": 19.94,
-        "error": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_[redacted]` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199466, Requested 2085. Please try again in 11m10.031999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+        "seconds": 18.86,
+        "error": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_[redacted]` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 198887, Requested 2472. Please try again in 9m47.088s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceed"
       },
       "self_healing": {
         "correct": null,
         "answer": null,
         "llm_calls": null,
-        "seconds": 0.98,
-        "error": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_[redacted]` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199464, Requested 1307. Please try again in 5m33.072s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+        "seconds": 0.96,
+        "error": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_[redacted]` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 198885, Requested 1694. Please try again in 4m10.128s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceed"
+      }
+    }
+  },
+  {
+    "run": 1,
+    "id": "Q12",
+    "query": "Which was higher in FY2026, Microsoft's or NVIDIA's net income, and by how much?",
+    "systems": {
+      "wide_rerank_k11": {
+        "correct": false,
+        "answer": "I didn't find any relevant documents.",
+        "llm_calls": 1,
+        "seconds": 16.74,
+        "error": null
+      },
+      "hybrid_single_pass": {
+        "correct": true,
+        "answer": "**Microsoft FY 2026 net income** (as reported in its 10‑K): **$133,749 million**【Document 3】  \n**NVIDIA FY 2026 net income** (as reported in its 10‑K): **$120,067 million**【Document 4】\n\n**Comparison**\n\n- Microsoft’s net income is higher.  \n- Difference:  \n\n\\[\n\\text{Difference} = 133{,}749\\; \\text{million} \\;-\\; 120{,}067\\; \\text{million} = 13{,}682\\; \\text{million}\n\\]\n\n**Result:** Microsoft’s FY 2026 net income exceeds NVIDIA’s by **$13,682 million**.",
+        "llm_calls": 1,
+        "seconds": 16.55,
+        "error": null
+      }
+    }
+  },
+  {
+    "run": 1,
+    "id": "Q13",
+    "query": "How did Walmart's FY2026 revenue compare with Amazon's FY2025 net sales?",
+    "systems": {
+      "wide_rerank_k11": {
+        "correct": false,
+        "answer": "Walmart’s FY 2026 revenue (net sales) was the sum of its U.S. and International segments:\n\n* **Walmart U.S. FY 2026 net sales:** $482,975 million  \n* **Walmart International FY 2026 net sales:** $130,423 million  \n\n**Total Walmart FY 2026 net sales:** $482,975 M + $130,423 M ≈ $613,398 million (≈ $613 billion).\n\nAmazon’s FY 2025 net sales are listed in the Amazon consolidated statement:\n\n* **Amazon FY 2025 total net sales:** $716,924 million (≈ $717 billion).\n\n**Comparison**\n\nWalmart’s FY 2026 revenue of about **$613 billion** is roughly **$104 billion lower** than Amazon’s FY 2025 net sales of about **$717 billion**, meaning Walmart’s FY 2026 revenue was about **14 % less** than Amazon’s FY 2025 net sales.",
+        "llm_calls": 1,
+        "seconds": 21.87,
+        "error": null
+      },
+      "hybrid_single_pass": {
+        "correct": false,
+        "answer": "**Walmart – FY 2026**\n\n* Walmart U.S. net sales: **$482,975 million**【Document 2】  \n* Walmart International net sales: **$130,423 million**【Document 6】\n\nCombined (derived) FY 2026 net sales:  \n\n\\[\n\\$482,975\\text{ million} + \\$130,423\\text{ million} = \\$613,398\\text{ million}\n\\]\n\n**Amazon – FY 2025**\n\n* Net sales (as reported): **$640,294 million**【Document 3】\n\n**Comparison**\n\n* Walmart’s FY 2026 net sales of **$613,398 million** are **$26,896 million** (about **4.2 %**) lower than Amazon’s FY 2025 net sales of **$640,294 million**.",
+        "llm_calls": 1,
+        "seconds": 20.3,
+        "error": null
+      }
+    }
+  },
+  {
+    "run": 1,
+    "id": "Q14",
+    "query": "Which company had higher reported revenue: Walmart in FY2026 or Amazon in FY2025, and what was the difference?",
+    "systems": {
+      "wide_rerank_k11": {
+        "correct": false,
+        "answer": "Walmart’s total revenue for fiscal 2026 (the sum of its U.S., International and Sam’s Club segments) was:\n\n- **Walmart U.S. net sales:** $482,975 million (Doc 4, Doc 6)  \n- **Walmart International net sales:** $130,423 million (Doc 4, Doc 7)  \n- **Sam’s Club U.S. net sales:** $93,015 million (Doc 9)  \n\n**Total Walmart FY 2026 revenue:** $482,975 M + $130,423 M + $93,015 M = **$706,413 million** (≈ $706.4 billion).\n\nAmazon’s total revenue for fiscal 2025 is given in its consolidated statement of operations:\n\n- **Total net sales FY 2025:** $716,924 million (Doc 11).\n\n**Comparison**\n\n- **Amazon FY 2025:** $716,924 million  \n- **Walmart FY 2026:** $706,413 million  \n\n**Result:** Amazon reported higher revenue.  \n**Difference:** $716,924 M − $706,413 M = **$10,511 million**, or about **$10.5 billion**.",
+        "llm_calls": 1,
+        "seconds": 24.3,
+        "error": null
+      },
+      "hybrid_single_pass": {
+        "correct": false,
+        "answer": "I didn't find any relevant documents.",
+        "llm_calls": 1,
+        "seconds": 18.76,
+        "error": null
+      }
+    }
+  },
+  {
+    "run": 1,
+    "id": "Q15",
+    "query": "Compare Microsoft's FY2026 revenue with Walmart's FY2026 revenue. Which company reported higher revenue?",
+    "systems": {
+      "wide_rerank_k11": {
+        "correct": false,
+        "answer": "**Revenue in FY 2026**\n\n| Company | FY 2026 Revenue (as reported) |\n|---------|------------------------------|\n| **Microsoft** | $331,839 million (≈ $331.8 billion)【Document 9】 |\n| **Walmart** | $713,200 million (≈ $713.2 billion)【Document 5】 |\n\n**Which company reported higher revenue?**  \nWalmart’s FY 2026 revenue of about **$713 billion** is more than double Microsoft’s FY 2026 revenue of about **$332 billion**. Therefore, **Walmart reported the higher revenue** for fiscal year 2026.",
+        "llm_calls": 1,
+        "seconds": 18.32,
+        "error": null
+      },
+      "hybrid_single_pass": {
+        "correct": true,
+        "answer": "**Microsoft (FY 2026) – Revenue**  \n- Total revenue reported: **$331,839 million**【Document 5】  \n\n**Walmart (FY 2026) – Revenue**  \n- Total revenue reported: **$713,163 million**【Document 8】  \n\n**Comparison**  \nWalmart’s FY 2026 revenue of $713,163 million is substantially higher than Microsoft’s FY 2026 revenue of $331,839 million. Therefore, **Walmart reported the higher revenue** for fiscal year 2026.",
+        "llm_calls": 1,
+        "seconds": 16.97,
+        "error": null
+      }
+    }
+  },
+  {
+    "run": 1,
+    "id": "Q16",
+    "query": "Compare NVIDIA's FY2026 revenue with Amazon's FY2025 net sales. Which company reported higher revenue?",
+    "systems": {
+      "wide_rerank_k11": {
+        "correct": true,
+        "answer": "**Revenue figures**\n\n| Company | Fiscal Year | Revenue (in millions) |\n|---------|-------------|----------------------|\n| NVIDIA   | FY 2026 (ended Jan 25, 2026) | **$215,938**【Document 3†L9-L13】 |\n| Amazon   | FY 2025 (ended Dec 31, 2025) | **$716,924** (total net sales = product $296,266 + service $420,658)【Document 6†L9-L15】 |\n\n**Comparison**\n\n- Amazon’s FY 2025 net sales of **$716,924 million** are far larger than NVIDIA’s FY 2026 revenue of **$215,938 million**.  \n\n**Conclusion**\n\nAmazon reported higher revenue than NVIDIA for the respective fiscal years.",
+        "llm_calls": 1,
+        "seconds": 22.24,
+        "error": null
+      },
+      "hybrid_single_pass": {
+        "correct": true,
+        "answer": "**NVIDIA – FY 2026 revenue**  \n- Reported revenue: **$215,938 million**【Document 8】  \n\n**Amazon – FY 2025 net sales**  \n- Reported consolidated net sales: **$716,924 million**【Document 1】  \n\n**Comparison**  \n- Amazon’s FY 2025 net sales of **$716,924 million** are higher than NVIDIA’s FY 2026 revenue of **$215,938 million**.",
+        "llm_calls": 1,
+        "seconds": 16.39,
+        "error": null
+      }
+    }
+  },
+  {
+    "run": 1,
+    "id": "Q17",
+    "query": "What was Microsoft's net profit margin for FY2026, calculated from its reported revenue and net income?",
+    "systems": {
+      "wide_rerank_k11": {
+        "correct": false,
+        "answer": "I didn't find any relevant documents.",
+        "llm_calls": 1,
+        "seconds": 12.79,
+        "error": null
+      },
+      "hybrid_single_pass": {
+        "correct": true,
+        "answer": "**Microsoft’s net profit margin for FY 2026**\n\n| FY 2026 figure | Value (in millions) | Source |\n|----------------|---------------------|--------|\n| Revenue | **$331,839** | 【Document 1】 |\n| Net income | **$133,749** | 【Document 1】 |\n\n**Calculation**\n\n\\[\n\\text{Net profit margin} = \\frac{\\text{Net income}}{\\text{Revenue}} \\times 100\n= \\frac{133,749}{331,839} \\times 100\n\\approx 40.3\\%\n\\]\n\n**Result**\n\nMicrosoft’s net profit margin for fiscal year 2026 was **approximately 40.3 %**.",
+        "llm_calls": 1,
+        "seconds": 17.86,
+        "error": null
+      }
+    }
+  },
+  {
+    "run": 1,
+    "id": "Q18",
+    "query": "What was NVIDIA's net profit margin for FY2026, calculated from its reported revenue and net income?",
+    "systems": {
+      "wide_rerank_k11": {
+        "correct": true,
+        "answer": "**NVIDIA’s net profit margin for fiscal year 2026**\n\n- **Revenue (FY 2026):** $215,938 million【Document 1†L9-L12】  \n- **Net income (FY 2026):** $120,067 million【Document 2†L9-L12】\n\n\\[\n\\text{Net profit margin} = \\frac{\\text{Net income}}{\\text{Revenue}} = \\frac{120{,}067}{215{,}938} \\approx 0.556 \\; (\\text{or } 55.6\\%)\n\\]\n\n**Answer:** NVIDIA’s net profit margin for FY 2026 was approximately **55.6 %**.",
+        "llm_calls": 1,
+        "seconds": 23.35,
+        "error": null
+      },
+      "hybrid_single_pass": {
+        "correct": true,
+        "answer": "**Net profit margin for FY 2026**\n\n- **Revenue (FY 2026):** $215,938 million【Document 2†L1-L4】  \n- **Net income (FY 2026):** $120,067 million【Document 2†L1-L4】\n\n**Calculation**\n\n\\[\n\\text{Net profit margin} = \\frac{\\text{Net income}}{\\text{Revenue}} = \\frac{120{,}067\\ \\text{million}}{215{,}938\\ \\text{million}}\n\\]\n\n\\[\n\\text{Net profit margin} = 0.556 \\text{ (or }55.6\\%\\text{)}\n\\]\n\n**Result:** NVIDIA’s net profit margin for fiscal year 2026 was **55.6 %**.",
+        "llm_calls": 1,
+        "seconds": 22.52,
+        "error": null
+      }
+    }
+  },
+  {
+    "run": 1,
+    "id": "Q19",
+    "query": "What fiscal year-end date did Microsoft use for FY2026, and how does it differ from NVIDIA's FY2026 fiscal year-end?",
+    "systems": {
+      "wide_rerank_k11": {
+        "correct": false,
+        "answer": "I didn't find any relevant documents.",
+        "llm_calls": 1,
+        "seconds": 16.53,
+        "error": null
+      },
+      "hybrid_single_pass": {
+        "correct": true,
+        "answer": "**Microsoft (FY 2026)**  \n- The filing states the fiscal year “Year Ended **June 30, 2026**”【Document 1】.\n\n**NVIDIA (FY 2026)**  \n- NVIDIA’s 2026 fiscal year “ends on the last Sunday in January” and the 2026 filing is dated “as of **January 25, 2026**”【Document 4】【Document 8】.\n\n**Difference**  \n- Microsoft’s FY 2026 ends **June 30, 2026**, while NVIDIA’s FY 2026 ends **January 25, 2026** (the last Sunday in January).  \n- Thus, Microsoft’s fiscal year‑end is about five months later than NVIDIA’s.",
+        "llm_calls": 1,
+        "seconds": 15.11,
+        "error": null
+      }
+    }
+  },
+  {
+    "run": 1,
+    "id": "Q20",
+    "query": "When comparing Walmart FY2026 and Amazon FY2025, what were the respective fiscal year-end dates reported in their filings?",
+    "systems": {
+      "wide_rerank_k11": {
+        "correct": false,
+        "answer": "- **Walmart FY 2026:** The filing states that Walmart’s fiscal year ends on **January 31, 2026** (see Document 2, which notes “Our fiscal year ends on January 31… for the fiscal years ended January 31, 2026…”).\n\n- **Amazon FY 2025:** The provided documents do not contain any information about Amazon’s fiscal‑year‑end date for FY 2025.\n\n**Result:** Walmart’s FY 2026 year‑end is January 31, 2026; Amazon’s FY 2025 year‑end date is not available in the supplied documents.",
+        "llm_calls": 1,
+        "seconds": 19.33,
+        "error": null
+      },
+      "hybrid_single_pass": {
+        "correct": true,
+        "answer": "- **Walmart FY 2026:** The filing states that “Our fiscal year ends on **January 31** … for fiscal 2026” and refers to “the fiscal years ended, **January 31, 2026**”【Document 6】.  \n\n- **Amazon FY 2025:** The filing presents results for the “Year Ended **December 31, 2025**” (and also for 2024)【Document 1】.  \n\nSo, Walmart’s fiscal year‑end was **January 31, 2026**, while Amazon’s fiscal year‑end was **December 31, 2025**.",
+        "llm_calls": 1,
+        "seconds": 15.71,
+        "error": null
       }
     }
   }

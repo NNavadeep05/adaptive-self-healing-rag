@@ -1,40 +1,40 @@
 {
   "plain_rag_k5": {
-    "cells": 35,
-    "errors": 1,
+    "cells": 50,
+    "errors": 0,
     "accuracy": 0.5,
     "mean_llm_calls": 1,
-    "mean_seconds": 2.3
+    "mean_seconds": 4.3
   },
   "wide_rerank_k11": {
-    "cells": 34,
-    "errors": 1,
-    "accuracy": 0.606,
+    "cells": 50,
+    "errors": 0,
+    "accuracy": 0.58,
     "mean_llm_calls": 1,
-    "mean_seconds": 4.7
+    "mean_seconds": 9.0
   },
   "hybrid_single_pass": {
-    "cells": 14,
-    "errors": 1,
-    "accuracy": 1,
+    "cells": 30,
+    "errors": 0,
+    "accuracy": 0.967,
     "mean_llm_calls": 1,
-    "mean_seconds": 10.4
+    "mean_seconds": 13.5
   },
   "self_healing": {
-    "cells": 31,
+    "cells": 41,
     "errors": 4,
-    "accuracy": 0.704,
-    "mean_llm_calls": 5.67,
-    "mean_seconds": 46.8,
-    "retry_rate": 0.481,
-    "silent_failures": 5
+    "accuracy": 0.703,
+    "mean_llm_calls": 5.43,
+    "mean_seconds": 45.3,
+    "retry_rate": 0.405,
+    "silent_failures": 7
   },
   "self_healing_v2": {
-    "cells": 9,
-    "errors": 2,
+    "cells": 21,
+    "errors": 1,
     "accuracy": 1,
     "mean_llm_calls": 3,
-    "mean_seconds": 20.2,
+    "mean_seconds": 27.3,
     "retry_rate": 0,
     "silent_failures": 0
   }
